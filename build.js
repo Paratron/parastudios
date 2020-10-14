@@ -5,8 +5,12 @@ const hljs = require("highlight.js");
 
 const buildTargetDirectory = './docs';
 
+/**
+ * I want to highlight my code blocks written in markdown by using highlight.js
+ * This way, the code will be statically highlighted without JS in the browser ✌
+ */
 marked.setOptions({
-    highlight: function(code, lang) {
+    highlight: function (code, lang) {
         const result = lang ? hljs.highlight(lang, code) : hljs.highlightAuto(code);
         return result.value;
     }
@@ -14,7 +18,9 @@ marked.setOptions({
 
 const escapeText = (text) => text.toLowerCase().replace(/[^\w]+/g, '-');
 
-// Override function
+/**
+ * Override the default render function for headlines so they are hash links.
+ */
 const renderer = {
     heading(text, level) {
         return `
@@ -26,7 +32,7 @@ const renderer = {
     }
 };
 
-marked.use({ renderer });
+marked.use({renderer});
 
 const views = require("./views");
 
@@ -43,11 +49,15 @@ const fullData = {
 
 const fileExists = (filename, files) => !!(files.find(f => f === filename));
 
-const buildOutlineFromLexedMarkdown = (lex) => {
+/**
+ * I want to show a little navigation in the post sidebar that links to the posts inner headlines.
+ * In order to build that nav, I am running through the lexed nodes of the markdown post to find all headlines.
+ */
+const buildPostOutlineFromLexedMarkdown = (lex) => {
     let outline = [];
     lex.forEach(elm => {
-        if(elm.type === "heading" && elm.depth > 1){
-            outline.push({level: elm.depth, text: elm.text, hash: escapeText(elm.text)})
+        if (elm.type === "heading" && elm.depth > 1) {
+            outline.push({level: elm.depth, text: elm.text, hash: escapeText(elm.text)});
         }
     });
 
@@ -55,7 +65,10 @@ const buildOutlineFromLexedMarkdown = (lex) => {
 };
 
 fs.ensureDir(`${buildTargetDirectory}/assets`);
-readDir('./assets').then(assets => assets.forEach(asset => fs.copyFile(`./assets/${asset}`, `${buildTargetDirectory}/assets/${asset}`)));
+readDir('./assets')
+    .then(assets => assets.forEach(
+        asset => fs.copyFile(`./assets/${asset}`, `${buildTargetDirectory}/assets/${asset}`)
+    ));
 
 readDir('./posts').then(async (folders) => {
     console.log('Pre-Pass: Gathering post meta');
@@ -79,7 +92,7 @@ readDir('./posts').then(async (folders) => {
         if (hasMarkdownIndex) {
             const markdownSource = await readFile(`./posts/${folder}/index.md`, 'utf8');
             post.content = marked(markdownSource);
-            post.outline = buildOutlineFromLexedMarkdown(marked.lexer(markdownSource));
+            post.outline = buildPostOutlineFromLexedMarkdown(marked.lexer(markdownSource));
         }
 
         return post;
@@ -97,7 +110,7 @@ readDir('./posts').then(async (folders) => {
         fullData.fullPosts = posts;
         fullData.posts = posts.filter((post) => !post.draft);
 
-        async function renderPost(post){
+        async function renderPost(post) {
             const html = await views.post(fullData, post);
             fs.ensureDir(`${buildTargetDirectory}/${post.slug}`);
             writeFile(`${buildTargetDirectory}/${post.slug}/index.html`, html);
@@ -106,6 +119,9 @@ readDir('./posts').then(async (folders) => {
 
         posts.forEach(renderPost);
 
+        /**
+         * We write RSS and index files at the END, because they need the list of existing posts.
+         */
         writeFile(`${buildTargetDirectory}/posts.rss`, views.rss(fullData));
         writeFile(`${buildTargetDirectory}/index.html`, await views.blogIndex(fullData, fullData.posts));
         writeFile(`${buildTargetDirectory}/_drafts.html`, await views.postList(fullData, fullData.fullPosts.filter(p => p.draft)));
