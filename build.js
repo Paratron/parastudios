@@ -97,8 +97,8 @@ readDir('./posts').then(async (folders) => {
         fullData.fullPosts = posts;
         fullData.posts = posts.filter((post) => !post.draft);
 
-        function renderPost(post){
-            const html = views.post(fullData, post);
+        async function renderPost(post){
+            const html = await views.post(fullData, post);
             fs.ensureDir(`${buildTargetDirectory}/${post.slug}`);
             writeFile(`${buildTargetDirectory}/${post.slug}/index.html`, html);
             post.files.forEach(f => fs.copyFile(`./posts/${post.folder}/${f}`, `${buildTargetDirectory}/${post.slug}/${f}`));
@@ -108,6 +108,6 @@ readDir('./posts').then(async (folders) => {
 
         writeFile(`${buildTargetDirectory}/posts.rss`, views.rss(fullData));
         writeFile(`${buildTargetDirectory}/index.html`, await views.blogIndex(fullData, fullData.posts));
-        writeFile(`${buildTargetDirectory}/_drafts.html`, views.postList(fullData, fullData.fullPosts.filter(p => p.draft)));
+        writeFile(`${buildTargetDirectory}/_drafts.html`, await views.postList(fullData, fullData.fullPosts.filter(p => p.draft)));
     });
 });

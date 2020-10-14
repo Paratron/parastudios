@@ -1,4 +1,9 @@
-const frame = (site, title, description, body) => `<!DOCTYPE html>
+const {getGithubData} = require("./github");
+
+const frame = async (site, title, description, body) => {
+    const user = await getGithubData();
+
+    return `<!DOCTYPE html>
 <html lang="en">
     <head>
         <link href="../assets/favicon.svg" rel="shortcut icon">
@@ -17,7 +22,7 @@ const frame = (site, title, description, body) => `<!DOCTYPE html>
 		${body}
 		<nav class="marginal">
             <a href="https://twitter.com/paratron">Follow me on Twitter</a>
-            <a href="https://github.com/users/paratron">Follow me on Github</a>
+            <a href="${user.html_url}">Follow me on Github</a>
             <a href="/posts.rss">Blog RSS</a>
         </nav>
         <button class="darkModeButton" onclick="toggleDarkMode()">Toggle Dark Mode</button>
@@ -32,5 +37,6 @@ const frame = (site, title, description, body) => `<!DOCTYPE html>
         </script>
     </body>
 </html>`;
+};
 
 module.exports = frame;
