@@ -203,7 +203,3 @@ Keep in mind that when you make changes to your project and want to publish them
 again, you need to update the version  field in your `package.json` according to 
 [semver](https://semver.org/). If you don't change the version, you cannot
 publish again.
-
-### Comments
-You can vote and comment on this blog post on reddit.
-[https://www.reddit.com/r/reactjs/comments/ayaypd/blog_how_to_publish_react_related_things_on_npm/]

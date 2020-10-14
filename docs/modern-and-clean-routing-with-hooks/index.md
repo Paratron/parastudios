@@ -221,12 +221,11 @@ This way we can also combine url parameters and other data. For example, the
 order area of the product may have a variant  url parameter which defines the
 color or size of the product to be used. A route would look like this:
 
+```jsx
 '/order/:variant': ({variant}) => (product) => <OrderForm product={product} variant={variant} />
+```
 
+## Conclusion
 
-Conclusion
 At least for me, this feels like a much more flexible and lightweight approach
-to React Router or Reach Router. As usual, critics and comments are highly
-welcome - you can contribute to this thread on reddit
-[https://www.reddit.com/r/reactjs/comments/b3puok/forget_react_router_modern_and_clean_routing_with/] 
- or this thread on hackernews [https://news.ycombinator.com/item?id=19457881].
+to React Router or Reach Router.

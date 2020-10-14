@@ -142,11 +142,6 @@ Last, but not least:
  * Performance updates to reduce unnecessary renders and decide on and render
    routes faster have been made
 
-Upgrade to hookrouter@1.2.1  today, to use all those features. The bundle size
-grew from the initial 1.8kb  to about 3.2kb, but hey - thats still only 30% of 
-react-router-dom  ?
-
-You can upvote and comment on this article on reddit
-[https://www.reddit.com/r/reactjs/comments/bj3n4i/updates_about_react_hook_router/] 
- or hacker news [https://news.ycombinator.com/item?id=19787995]. I'd appreciate
-if you did spread the word ✌️
+Upgrade to `hookrouter@1.2.1` today, to use all those features. The bundle size
+grew from the initial 1.8kb to about 3.2kb, but hey - thats still only 30% of 
+`react-router-dom`.

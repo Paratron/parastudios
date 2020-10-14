@@ -218,13 +218,14 @@ needs.</li>
 <p>This way we can also combine url parameters and other data. For example, the
 order area of the product may have a variant  url parameter which defines the
 color or size of the product to be used. A route would look like this:</p>
-<p>&#39;/order/:variant&#39;: ({variant}) =&gt; (product) =&gt; <OrderForm product={product} variant={variant} /></p>
-<p>Conclusion
-At least for me, this feels like a much more flexible and lightweight approach
-to React Router or Reach Router. As usual, critics and comments are highly
-welcome - you can contribute to this thread on reddit
-[<a href="https://www.reddit.com/r/reactjs/comments/b3puok/forget_react_router_modern_and_clean_routing_with/%5D">https://www.reddit.com/r/reactjs/comments/b3puok/forget_react_router_modern_and_clean_routing_with/]</a> 
- or this thread on hackernews [<a href="https://news.ycombinator.com/item?id=19457881%5D">https://news.ycombinator.com/item?id=19457881]</a>.</p>
+<pre><code class="language-jsx"><span class="hljs-string">&#x27;/order/:variant&#x27;</span>: <span class="hljs-function">(<span class="hljs-params">{variant}</span>) =&gt;</span> <span class="hljs-function">(<span class="hljs-params">product</span>) =&gt;</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">OrderForm</span> <span class="hljs-attr">product</span>=<span class="hljs-string">{product}</span> <span class="hljs-attr">variant</span>=<span class="hljs-string">{variant}</span> /&gt;</span></span></code></pre>
+
+            <h2 id="conclusion">
+              <a class="anchor" href="#conclusion">
+                Conclusion
+              </a>
+            </h2><p>At least for me, this feels like a much more flexible and lightweight approach
+to React Router or Reach Router.</p>
 
 		</article>
 		<aside>
@@ -235,6 +236,7 @@ welcome - you can contribute to this thread on reddit
 <a href="#sane-handling-of-url-parameters" class="l2">Sane handling of URL parameters</a>
 <a href="#nested-routes" class="l2">Nested routes</a>
 <a href="#redirects" class="l2">Redirects</a>
+<a href="#conclusion" class="l2">Conclusion</a>
 </nav>
             <nav class="posts">
     <h3>Recent posts</h3>
