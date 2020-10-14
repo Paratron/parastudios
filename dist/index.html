@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link href="../assets/favicon.svg" rel="shortcut icon">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Recent Posts - web://❤</title>
+        <meta name="description" content="This is a list of my recent posts." />
+        <link type="text/css" rel="stylesheet" href="../assets/style.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="/posts.rss" />
+    </head>
+    <body>
+		<header>
+			<a class="blog-title" href="/" title="web://❤"><img src="../assets/web-love-bright.svg" alt="web://❤" /></a>
+            <small>A web related blog by Christian Engel</small>
+		</header>
+		<main>
+<section class="postListing">
+    <h3><a href="./updates-about-react-hook-router/">Updates about react hook router</a></h3>
+    <small>Published on Tue Apr 30 2019</small>
+    <p>It's been about a month, since I released my initial version of hookrouter. Lots of things happened since then.</p>
+    <p>
+        <a href="./updates-about-react-hook-router/">Read Updates about react hook router</a>
+    </p>
+</section>
+<section class="postListing">
+    <h3><a href="./modern-and-clean-routing-with-hooks/">Modern and clean routing with hooks</a></h3>
+    <small>Published on Thu Mar 21 2019</small>
+    <p>A quick experiment about using hooks for routing in a react app turned out to be
+very flexible and powerful.</p>
+    <p>
+        <a href="./modern-and-clean-routing-with-hooks/">Read Modern and clean routing with hooks</a>
+    </p>
+</section>
+<section class="postListing">
+    <h3><a href="./create-a-react-component-as-npm-module/">Create a react component as npm module</a></h3>
+    <small>Published on Wed Mar 06 2019</small>
+    <p>There are a lot of guides out there that advise you to use webpack to wrap up your components before publishing them to npm. This is absolutely not necessary. I would even consider it bad practice. Its much easier without webpack, too.</p>
+    <p>
+        <a href="./create-a-react-component-as-npm-module/">Read Create a react component as npm module</a>
+    </p>
+</section>
+</main><aside>
+<section class="profile">
+    <a href="https://github.com/Paratron">
+        <img alt="Christian's Github Avatar" src="https://avatars2.githubusercontent.com/u/902599?v=4" />
+    </a>
+    <h1>Christian Engel</h1>
+    <h2>Paratron</h2>
+    <p>I am working as a web developer for over 15 years. I care a lot about                              simple and maintainable code that is fun to work with, good documentation and cl                             ean APIs.</p>
+    
+</section>
+</aside>
+		<nav class="marginal">
+            <a href="https://twitter.com/paratron">Follow me on Twitter</a>
+            <a href="https://github.com/users/paratron">Follow me on Github</a>
+            <a href="/posts.rss">Blog RSS</a>
+        </nav>
+        <button class="darkModeButton" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        <script>
+            function toggleDarkMode(){
+                document.querySelector("html").toggleAttribute("data-dark");
+                localStorage.setItem("dark", document.querySelector("html").getAttribute("data-dark"));
+            }
+            if(localStorage.getItem("dark") !== null){
+                toggleDarkMode();
+            }
+        </script>
+    </body>
+</html>

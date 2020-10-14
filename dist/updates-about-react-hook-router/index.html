@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link href="../assets/favicon.svg" rel="shortcut icon">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Updates about react hook router - web://❤</title>
+        <meta name="description" content="It's been about a month, since I released my initial version of hookrouter. Lots of things happened since then." />
+        <link type="text/css" rel="stylesheet" href="../assets/style.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="/posts.rss" />
+    </head>
+    <body>
+		<header>
+			<a class="blog-title" href="/" title="web://❤"><img src="../assets/web-love-bright.svg" alt="web://❤" /></a>
+            <small>A web related blog by Christian Engel</small>
+		</header>
+		<article>
+			
+            <h1 id="updates-about-react-hook-router">
+              <a class="anchor" href="#updates-about-react-hook-router">
+                Updates about react hook router
+              </a>
+            </h1><p><img src="./header.jpg" alt="Version 1.2.1"></p>
+<p>It&#39;s been about a month, since I released my initial version of hookrouter
+[<a href="https://www.npmjs.com/package/hookrouter%5D">https://www.npmjs.com/package/hookrouter]</a>. Lots of things happened since then.</p>
+<p>First of all: thanks for all the feedback and love I received for publishing the
+project. Lots of comments and upvotes on reddit, tons of tweets, several
+mentions in big react newsletters! This motivated me a lot to keep working and
+improving on the initial version. Today, I released version 1.2.1 of hookrouter
+[<a href="https://www.npmjs.com/package/hookrouter%5D">https://www.npmjs.com/package/hookrouter]</a>  on npm. </p>
+<p>Improved documentation
+I sat down and wrote docs about every feature contained in the package and how
+to use them. Since I could not decide on a documentation system right now, the
+docs are hosted simply as hypertext formatted markdown inside the github project
+[<a href="https://github.com/Paratron/hookrouter/blob/master/src-docs/pages/en/README.md%5D">https://github.com/Paratron/hookrouter/blob/master/src-docs/pages/en/README.md]</a>
+. But now about the new stuff:</p>
+<p>Intercepting Navigation Intents
+This was probably one of the most asked for features that made it into the
+package. You can now prevent the user from navigating away from a given route
+completely. Or you can delay the navigation. Or you can rewrite it. Lots of
+possibilities! One user mentioned that he used the feature to implement page
+transition animations with just a couple lines of code
+[<a href="https://github.com/Paratron/hookrouter/issues/47#issuecomment-487213281%5D">https://github.com/Paratron/hookrouter/issues/47#issuecomment-487213281]</a>.
+Usually you would use it to prevent your user to accidentially navigate away
+from unsaved changes.</p>
+<p>While there is a very granular possibility to intercept navigation
+[<a href="https://github.com/Paratron/hookrouter/blob/master/src-docs/pages/en/03_navigation.md#intercepting-navigation-intents%5D">https://github.com/Paratron/hookrouter/blob/master/src-docs/pages/en/03_navigation.md#intercepting-navigation-intents]</a>
+, most users will certainly rely on the useControlledInterceptor()  hook:</p>
+<p>const GuardedForm = () =&gt; {
+    const [nextPath, confirmNavigation, resetPath, stopInterception] = useControlledInterceptor();</p>
+<pre><code><span class="hljs-keyword">const</span> handleSubmit = <span class="hljs-function">() =&gt;</span> {
+        saveData();
+        stopInterception();
+        navigate(<span class="hljs-string">&#x27;/success&#x27;</span>);
+};
+
+<span class="hljs-keyword">return</span> (
+    <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">React.Fragment</span>&gt;</span>
+        {nextPath &amp;&amp; (
+            <span class="hljs-tag">&lt;<span class="hljs-name">ConfirmPopup</span>
+                <span class="hljs-attr">onConfirm</span>=<span class="hljs-string">{confirmNavigation}</span>
+                <span class="hljs-attr">onCancel</span>=<span class="hljs-string">{resetPath}</span>
+            /&gt;</span>
+        ) }
+        <span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">onSubmit</span>=<span class="hljs-string">{handleSubmit}</span>&gt;</span>
+            ...
+        <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">React.Fragment</span>&gt;</span></span>
+);</code></pre>
+<p>}</p>
+<p>This is all code you need to cancel a user navigation, ask if he&#39;s sure he want
+to leave and let him continue editing, if not. All with custom confirmation UI.</p>
+<p>Utilizing URL Query Parameters
+While it is not used for routing directly, utilizing query parameters comes in
+handy when you want to mirror parts of your application state into the URL to
+enable your users to copy them. If you have for example a product overview page
+and want to provide controls to filter it - its handy to put the filter values
+into the URL.</p>
+<p>I added a useQueryParams()  hook that will return those query parameters as
+javascript object. And you can even update the params using the hook - causing
+all components that hooked into the params to re-render. Its a bit like a
+globally shared state hook, but shhhh - dont misuse it! ?</p>
+<p>const SearchWidget = ({onSearch}) =&gt; {
+    const [queryParams, setQueryParams] = useQueryParams();</p>
+<pre><code><span class="hljs-keyword">const</span> {
+    <span class="hljs-comment">// Use object destructuring and a default value</span>
+    <span class="hljs-comment">// if the param is not yet present in the URL.</span>
+    q = <span class="hljs-string">&#x27;&#x27;</span>
+} = queryParams;
+
+<span class="hljs-keyword">const</span> [searchBuffer, setSearchBuffer] = React.useState(q);
+
+<span class="hljs-keyword">const</span> searchHandler = <span class="hljs-function">() =&gt;</span> {
+    setQueryParams({<span class="hljs-attr">q</span>: searchBuffer});
+}
+
+<span class="hljs-keyword">return</span> (
+    <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;search&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">{searchBuffer}</span> <span class="hljs-attr">onChange</span>=<span class="hljs-string">{(e)</span> =&gt;</span> setSearchBuffer(e.currentTarget.value)} /&gt;
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{searchHandler}</span>&gt;</span>Search now<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+);</code></pre>
+<p>}</p>
+<p>Serverside Rendering
+Rendering your application serverside in a node environment is now also
+possible. SSR was also one of the first features users asked for, since its
+important for SEO or just being nice to users with JS disabled and/or slow
+network.</p>
+<p>You can set the path name before rendering in react and the router will honor it
+even in node:</p>
+<p>const React = require(&#39;react&#39;);
+const {renderToString} = require(&#39;react-dom/server&#39;);
+const hookrouter = require(&#39;hookrouter&#39;);</p>
+<p>hookrouter.setPath(&#39;/product&#39;);</p>
+<p>import App from &#39;./App&#39;;</p>
+<p>const result = renderToString(<App/>);</p>
+<p>console.log(result);</p>
+<p>Internal redirects will also be applied and can - if needed - be read again from
+the router to perform actual HTTP redirects. Read more about serverside
+rendering
+[<a href="https://github.com/Paratron/hookrouter/blob/master/src-docs/pages/en/05_serverside-rendering.md%5D">https://github.com/Paratron/hookrouter/blob/master/src-docs/pages/en/05_serverside-rendering.md]</a>
+.</p>
+<p>Other Features
+Last, but not least:</p>
+<ul>
+<li>You need to know which path your app is working on, right now? Use the 
+usePath()  hook. Its also updating your component on path changes, if you
+want to
+[<a href="https://github.com/Paratron/hookrouter/blob/master/src-docs/pages/en/04_other-features.md#using-the-uri-path%5D">https://github.com/Paratron/hookrouter/blob/master/src-docs/pages/en/04_other-features.md#using-the-uri-path]</a>
+.</li>
+<li>Updating the window title, when a certain route has been loaded? No problem.
+Call useTitle(&#39;About me&#39;)  and you are set. If your component is unmounted,
+the app returns to the previous title, automatically.</li>
+<li>A basepath  can now be set
+[<a href="https://github.com/Paratron/hookrouter/blob/master/src-docs/pages/en/03_navigation.md#setting-a-base-path%5D">https://github.com/Paratron/hookrouter/blob/master/src-docs/pages/en/03_navigation.md#setting-a-base-path]</a> 
+ and will be ignored during routing. Call setBasepath(&#39;/fancypants&#39;)  before
+your app runs and you are safe.</li>
+<li>Performance updates to reduce unnecessary renders and decide on and render
+routes faster have been made</li>
+</ul>
+<p>Upgrade to <a href="mailto:&#x68;&#x6f;&#x6f;&#107;&#114;&#x6f;&#117;&#116;&#x65;&#x72;&#64;&#49;&#x2e;&#50;&#x2e;&#49;">&#x68;&#x6f;&#x6f;&#107;&#114;&#x6f;&#117;&#116;&#x65;&#x72;&#64;&#49;&#x2e;&#50;&#x2e;&#49;</a>  today, to use all those features. The bundle size
+grew from the initial 1.8kb  to about 3.2kb, but hey - thats still only 30% of 
+react-router-dom  ?</p>
+<p>You can upvote and comment on this article on reddit
+[<a href="https://www.reddit.com/r/reactjs/comments/bj3n4i/updates_about_react_hook_router/%5D">https://www.reddit.com/r/reactjs/comments/bj3n4i/updates_about_react_hook_router/]</a> 
+ or hacker news [<a href="https://news.ycombinator.com/item?id=19787995%5D">https://news.ycombinator.com/item?id=19787995]</a>. I&#39;d appreciate
+if you did spread the word ✌️</p>
+
+		</article>
+		<aside>
+		    <nav class="outline">
+        <h3>Post Content</h3>
+        
+</nav>
+            <nav class="posts">
+    <h3>Recent posts</h3>
+    <nav class="postList">
+    <a href="../updates-about-react-hook-router/"><span>2019-04-30 13:58:56</span> <span>Updates about react hook router</span></a>
+<a href="../modern-and-clean-routing-with-hooks/"><span>2019-03-21 12:17:37</span> <span>Modern and clean routing with hooks</span></a>
+<a href="../create-a-react-component-as-npm-module/"><span>2019-03-06 15:42:31</span> <span>Create a react component as npm module</span></a>
+    </nav>
+</nav>	
+        </aside>
+		<nav class="marginal">
+            <a href="https://twitter.com/paratron">Follow me on Twitter</a>
+            <a href="https://github.com/users/paratron">Follow me on Github</a>
+            <a href="/posts.rss">Blog RSS</a>
+        </nav>
+        <button class="darkModeButton" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        <script>
+            function toggleDarkMode(){
+                document.querySelector("html").toggleAttribute("data-dark");
+                localStorage.setItem("dark", document.querySelector("html").getAttribute("data-dark"));
+            }
+            if(localStorage.getItem("dark") !== null){
+                toggleDarkMode();
+            }
+        </script>
+    </body>
+</html>

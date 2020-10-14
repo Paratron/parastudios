@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link href="../assets/favicon.svg" rel="shortcut icon">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Modern and clean routing with hooks - web://❤</title>
+        <meta name="description" content="A quick experiment about using hooks for routing in a react app turned out to be
+very flexible and powerful." />
+        <link type="text/css" rel="stylesheet" href="../assets/style.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="/posts.rss" />
+    </head>
+    <body>
+		<header>
+			<a class="blog-title" href="/" title="web://❤"><img src="../assets/web-love-bright.svg" alt="web://❤" /></a>
+            <small>A web related blog by Christian Engel</small>
+		</header>
+		<article>
+			
+            <h1 id="modern-and-clean-routing-with-hooks">
+              <a class="anchor" href="#modern-and-clean-routing-with-hooks">
+                Modern and clean routing with hooks
+              </a>
+            </h1><p><img src="./header.jpg" alt="Crossroads in a sunset"></p>
+<p>A quick experiment about using hooks for routing in a react app turned out to be
+very flexible and powerful. I published the module <a href="https://www.npmjs.com/package/hookrouter">hookrouter on npm</a> for anyone
+to use. Let me introduce it to you in this article.</p>
+<blockquote>
+<p>Update:  Version 1.2.1  has been released with lots of new features and <a href="https://github.com/Paratron/hookrouter/blob/master/src-docs/pages/en/README.md">detailed documentation</a>.</p>
+</blockquote>
+
+            <h2 id="installation-and-module-contents">
+              <a class="anchor" href="#installation-and-module-contents">
+                Installation and module contents
+              </a>
+            </h2><p>The router module is <a href="https://www.npmjs.com/package/hookrouter">published on npm</a> 
+and can be installed by calling <code>npm -i hookrouter</code>. It has zero dependencies and
+adds <a href="https://bundlephobia.com/result?p=hookrouter@1.0.0-beta">about 2.9kb to your bundle</a>.</p>
+<p>The module contains the hook function useRoutes()  that evaluates your
+predefined routes and returns a result. There is also the function navigate(),
+which imperatively navigates your application to a new url. useRedirect()  can
+be used to automatically forward from one matched url to another url. And last
+but not least there is a tiny wrapper around the basic HTML anchor tag which is
+accessible as react component <code>&lt;A /&gt;</code>. Its 100% feature compatible to the native 
+<code>&lt;a /&gt;</code> tag but pushes navigations to the history stack instead of actually
+loading a new page.</p>
+
+            <h2 id="routing-basics">
+              <a class="anchor" href="#routing-basics">
+                Routing basics
+              </a>
+            </h2><p>You can define your possible routes as an object with urls as keys and result
+functions as values. For example: </p>
+<pre><code class="language-jsx"><span class="hljs-keyword">const</span> routes = {
+    <span class="hljs-string">&#x27;/&#x27;</span>: <span class="hljs-function">() =&gt;</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">HomePage</span> /&gt;</span></span>,
+    <span class="hljs-string">&#x27;/about&#x27;</span>: <span class="hljs-function">() =&gt;</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">AboutPage</span> /&gt;</span></span>,
+    <span class="hljs-string">&#x27;/products&#x27;</span>: <span class="hljs-function">() =&gt;</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">ProductOverview</span> /&gt;</span></span>,
+    <span class="hljs-string">&#x27;/products/:id&#x27;</span>: <span class="hljs-function">(<span class="hljs-params">{id}</span>) =&gt;</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">ProductDetails</span> <span class="hljs-attr">id</span>=<span class="hljs-string">{id}</span> /&gt;</span></span>
+};</code></pre>
+<p>I like this way of defining the routes, since you can see immediately what
+routes are there and how they work. If a route matches, the function gets
+called. If a route has url attributes (like the id), they will be passed as
+argument to the function. In my opinion, this is much cleaner than having to
+place <Route />  components all over the place <a href="https://reacttraining.com/react-router/web/example/basic">like its done in React Router</a>,
+or decorating your components with props they don&#39;t actually consume (and may infuriate your IDE),
+<a href="https://reach.tech/router/example/basic">like in Reach Router</a>.</p>
+<p>To eventually make your routes work, the whole construct looks like this:</p>
+<pre><code class="language-jsx"><span class="hljs-keyword">import</span> {useRoutes} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;hookrouter&#x27;</span>;
+
+<span class="hljs-keyword">const</span> routes = {
+    <span class="hljs-string">&#x27;/&#x27;</span>: <span class="hljs-function">() =&gt;</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">HomePage</span> /&gt;</span></span>,
+    <span class="hljs-string">&#x27;/about&#x27;</span>: <span class="hljs-function">() =&gt;</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">AboutPage</span> /&gt;</span></span>,
+    <span class="hljs-string">&#x27;/products&#x27;</span>: <span class="hljs-function">() =&gt;</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">ProductOverview</span> /&gt;</span></span>,
+    <span class="hljs-string">&#x27;/products/:id&#x27;</span>: <span class="hljs-function">(<span class="hljs-params">{id}</span>) =&gt;</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">ProductDetails</span> <span class="hljs-attr">id</span>=<span class="hljs-string">{id}</span> /&gt;</span></span>
+};
+
+<span class="hljs-keyword">const</span> MyApp = <span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-keyword">const</span> routeResult = useRoutes(routes);
+
+    <span class="hljs-keyword">return</span> routeResult || <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">NotFoundPage</span> /&gt;</span></span>;
+}</code></pre>
+<p>The <code>useRoutes()</code> hook consumes the routes object, evaluates them one by one and
+checks if they match the current url path. If one of the routes matches, its
+function will be called (and evaluating will stop). Whatever is returned from
+that function is also returned by the hook function into your functional
+component. What makes this approach fast and clear is, that the components
+inside the result functions will only be created and rendered, when a route
+matches and the result function is being called.</p>
+<p>If nothing matched, null  will be returned by the hook. This enables you to
+display fallback content like the <code>&lt;NotFoundPage /&gt;</code>  in the example above, if you
+like. Or you simply return the null  value from your functional component -
+react is fine with that.</p>
+
+            <h2 id="sane-handling-of-url-parameters">
+              <a class="anchor" href="#sane-handling-of-url-parameters">
+                Sane handling of URL parameters
+              </a>
+            </h2><p>I decided to follow the example of url parameter formatting that is also used by
+React Router and Reach Router: If you put placeholders starting with a colon in
+your URL, they are treated as named parameters. In our example, the route 
+<code>/products/:id</code> contains an <code>id</code> parameter. Any URL like these matches here: 
+<code>/products/12</code>, <code>/products/afas11kj</code> or <code>/products/whatever</code>. The character sequence
+will be terminated by the next <code>/</code> character, or the end of the URL string.</p>
+<p>You can also use multiple URL parameters, if you want to - just give them
+different names: <code>/products/:id/variants/:variant</code>.</p>
+<p>The similarity ends here, since both React Router and Reach Router auto-magically
+apply all URL parameters to the result component. With hookrouter, you have more
+control and see clearly what is applied on your component.</p>
+<p>The route hook reads all url parameters and puts them into an object, using the
+keys you defined in the route. The resulting object will be sent to your result
+function:</p>
+<pre><code class="language-jsx">   <span class="hljs-string">&#x27;/products/:id&#x27;</span>: <span class="hljs-function">(<span class="hljs-params">{id}</span>) =&gt;</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">ProductDetails</span> <span class="hljs-attr">productId</span>=<span class="hljs-string">{id}</span> /&gt;</span></span></code></pre>
+<p>In this example, we use object destructuring to take the id  property from the
+props object and then apply it onto our component.</p>
+
+            <h2 id="nested-routes">
+              <a class="anchor" href="#nested-routes">
+                Nested routes
+              </a>
+            </h2><p>Lets assume we have a parent application component that should do some basic
+routing, like above. We modify it just a little bit (see explanation below).</p>
+<pre><code class="language-jsx"><span class="hljs-keyword">import</span> {useRoutes} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;hookrouter&#x27;</span>;
+
+<span class="hljs-keyword">const</span> routes = {
+    <span class="hljs-string">&#x27;/&#x27;</span>: <span class="hljs-function">() =&gt;</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">HomePage</span> /&gt;</span></span>,
+    <span class="hljs-string">&#x27;/about&#x27;</span>: <span class="hljs-function">() =&gt;</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">AboutPage</span> /&gt;</span></span>,
+    <span class="hljs-string">&#x27;/products/:id*&#x27;</span>: <span class="hljs-function">(<span class="hljs-params">{id}</span>) =&gt;</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">ProductArea</span> <span class="hljs-attr">productId</span>=<span class="hljs-string">{id}</span> /&gt;</span></span>
+};
+
+<span class="hljs-keyword">const</span> MyApp = <span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-keyword">const</span> routeResult = useRoutes(routes);
+
+    <span class="hljs-keyword">return</span> routeResult || <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">NotFoundPage</span> /&gt;</span></span>;
+}</code></pre>
+<p>Note the asterisk <code>*</code> at the end of the <code>/products/:id</code>  route. This means: &quot;match
+everything that starts with <code>/products/[something]</code>.</p>
+<p>And now, our <code>&lt;ProductArea /&gt;</code> component can also use routes internally:</p>
+<pre><code class="language-jsx"><span class="hljs-keyword">import</span> {useRoutes} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;hookrouter&#x27;</span>;
+
+<span class="hljs-keyword">const</span> routes = {
+    <span class="hljs-string">&#x27;/details&#x27;</span>: <span class="hljs-function">() =&gt;</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">ProductDetails</span> /&gt;</span></span>,
+    <span class="hljs-string">&#x27;/order&#x27;</span>: <span class="hljs-function">() =&gt;</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">OrderForm</span> /&gt;</span></span>
+};
+
+<span class="hljs-keyword">const</span> ProductArea = <span class="hljs-function">(<span class="hljs-params">{id}</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> routeResult = useRoutes(routes);
+
+    <span class="hljs-keyword">return</span> routeResult || <span class="hljs-string">&#x27;Invalid product area&#x27;</span>;
+}</code></pre>
+<p>Not that this is exactly the same pattern as you used in the parent component.
+All the &quot;magic&quot; is done by the asterisk in the parent route. </p>
+<p>If we for example open the url <code>/products/12/details</code>, the first route hook in our
+ <code>&lt;MyApp /&gt;</code> component will match <code>/products/:id*</code> and then remove that part of
+the url path for nested matches. If you call the next <code>useRoutes()</code> inside a
+child component, it will not match against the full url path but only against
+the part that remains, which would be <code>/details</code>. You can nest routes as much as
+you like.</p>
+
+            <h2 id="redirects">
+              <a class="anchor" href="#redirects">
+                Redirects
+              </a>
+            </h2><p>Our example from above has a problem: When I call the URL <code>/products/12</code>, our
+route <code>&lt;MyApp /&gt;</code> matches and calls an instance of <code>&lt;ProductArea /&gt;</code> but in
+there, nothing would match. Having Invalid product area  printed to the screen
+would be the result. Lets redirect users from <code>/</code> to <code>/details</code> automatically:</p>
+<pre><code class="language-jsx"><span class="hljs-keyword">import</span> {useRoutes, useRedirect} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;hookrouter&#x27;</span>;
+
+<span class="hljs-keyword">const</span> routes = {
+    <span class="hljs-string">&#x27;/details&#x27;</span>: <span class="hljs-function">() =&gt;</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">ProductDetails</span> /&gt;</span></span>,
+    <span class="hljs-string">&#x27;/order&#x27;</span>: <span class="hljs-function">() =&gt;</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">OrderForm</span> /&gt;</span></span>
+};
+
+<span class="hljs-keyword">const</span> ProductArea = <span class="hljs-function">(<span class="hljs-params">{id}</span>) =&gt;</span> {
+    useRedirect(<span class="hljs-string">&#x27;/&#x27;</span>, <span class="hljs-string">&#x27;/details&#x27;</span>);
+    <span class="hljs-keyword">const</span> routeResult = useRoutes(routes);
+
+    <span class="hljs-keyword">return</span> routeResult || <span class="hljs-string">&#x27;Invalid product area&#x27;</span>;
+}</code></pre>
+<p>We perform the redirect before we match any routes to prevent an unnecessary
+re-render of the <ProductArea />  component. With this approach, other
+components may just navigate the user to the product area and leave the decision
+where user should end up to that component. Other parts of the application do
+not need to know about the internals of the product area.</p>
+<p>Advanced usage
+Since the hook router just calls the result function of a route and returns
+whatever is returned directly into your functional component, this enables us to
+do a lot more than just blindly return and render components. </p>
+<p>I&#39;d like to expand the example from above to fetch data of the current product
+inside <ProductArea>  and forward that data to the child components returned by
+the routes.</p>
+<p>Lets see how to do that (I&#39;ll explain the details below):</p>
+<pre><code class="language-jsx"><span class="hljs-keyword">import</span> {useRoutes, useRedirect} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;hookrouter&#x27;</span>;
+<span class="hljs-comment">// This is an assumed custom hook, that returns product data</span>
+<span class="hljs-keyword">import</span> {useProduct} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;../productDataHook&#x27;</span>;
+
+<span class="hljs-keyword">const</span> routes = {
+    <span class="hljs-string">&#x27;/details&#x27;</span>: <span class="hljs-function">() =&gt;</span> <span class="hljs-function">(<span class="hljs-params">productObj</span>) =&gt;</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">ProductDetails</span> <span class="hljs-attr">product</span>=<span class="hljs-string">{productObj}</span> /&gt;</span></span>,
+    <span class="hljs-string">&#x27;/order&#x27;</span>: <span class="hljs-function">() =&gt;</span> <span class="hljs-function">(<span class="hljs-params">productObj</span>) =&gt;</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">OrderForm</span> <span class="hljs-attr">product</span>=<span class="hljs-string">{productObj}</span> /&gt;</span></span>
+};
+
+<span class="hljs-keyword">const</span> ProductArea = <span class="hljs-function">(<span class="hljs-params">{id}</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> [product] = useProduct(id);
+
+    useRedirect(<span class="hljs-string">&#x27;/&#x27;</span>, <span class="hljs-string">&#x27;/details&#x27;</span>);
+    <span class="hljs-keyword">const</span> routeResult = useRoutes(routes);
+
+    <span class="hljs-keyword">return</span> routeResult(product) || <span class="hljs-string">&#x27;Invalid product area&#x27;</span>;
+}</code></pre>
+<p>I modified the routes  object just slightly. The result functions now don&#39;t
+return components that can be immediately rendered by react, but return other
+functions, that await a product  object to be given. In the last line of the
+component, I am calling routeResult  with the previously obtained product object</p>
+<ul>
+<li>this is passed to the final component, which gets rendered with all data it
+needs.</li>
+</ul>
+<p>This way we can also combine url parameters and other data. For example, the
+order area of the product may have a variant  url parameter which defines the
+color or size of the product to be used. A route would look like this:</p>
+<p>&#39;/order/:variant&#39;: ({variant}) =&gt; (product) =&gt; <OrderForm product={product} variant={variant} /></p>
+<p>Conclusion
+At least for me, this feels like a much more flexible and lightweight approach
+to React Router or Reach Router. As usual, critics and comments are highly
+welcome - you can contribute to this thread on reddit
+[<a href="https://www.reddit.com/r/reactjs/comments/b3puok/forget_react_router_modern_and_clean_routing_with/%5D">https://www.reddit.com/r/reactjs/comments/b3puok/forget_react_router_modern_and_clean_routing_with/]</a> 
+ or this thread on hackernews [<a href="https://news.ycombinator.com/item?id=19457881%5D">https://news.ycombinator.com/item?id=19457881]</a>.</p>
+
+		</article>
+		<aside>
+		    <nav class="outline">
+        <h3>Post Content</h3>
+        <a href="#installation-and-module-contents" class="l2">Installation and module contents</a>
+<a href="#routing-basics" class="l2">Routing basics</a>
+<a href="#sane-handling-of-url-parameters" class="l2">Sane handling of URL parameters</a>
+<a href="#nested-routes" class="l2">Nested routes</a>
+<a href="#redirects" class="l2">Redirects</a>
+</nav>
+            <nav class="posts">
+    <h3>Recent posts</h3>
+    <nav class="postList">
+    <a href="../updates-about-react-hook-router/"><span>2019-04-30 13:58:56</span> <span>Updates about react hook router</span></a>
+<a href="../modern-and-clean-routing-with-hooks/"><span>2019-03-21 12:17:37</span> <span>Modern and clean routing with hooks</span></a>
+<a href="../create-a-react-component-as-npm-module/"><span>2019-03-06 15:42:31</span> <span>Create a react component as npm module</span></a>
+    </nav>
+</nav>	
+        </aside>
+		<nav class="marginal">
+            <a href="https://twitter.com/paratron">Follow me on Twitter</a>
+            <a href="https://github.com/users/paratron">Follow me on Github</a>
+            <a href="/posts.rss">Blog RSS</a>
+        </nav>
+        <button class="darkModeButton" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        <script>
+            function toggleDarkMode(){
+                document.querySelector("html").toggleAttribute("data-dark");
+                localStorage.setItem("dark", document.querySelector("html").getAttribute("data-dark"));
+            }
+            if(localStorage.getItem("dark") !== null){
+                toggleDarkMode();
+            }
+        </script>
+    </body>
+</html>

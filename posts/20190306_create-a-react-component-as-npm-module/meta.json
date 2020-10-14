@@ -1,0 +1,7 @@
+{
+  "title": "Create a react component as npm module",
+  "slug": "create-a-react-component-as-npm-module",
+  "publishTime": "2019-03-06 15:42:31",
+  "description": "There are a lot of guides out there that advise you to use webpack to wrap up your components before publishing them to npm. This is absolutely not necessary. I would even consider it bad practice. Its much easier without webpack, too.",
+  "tags": ["npm", "babel", "webpack", "javascript", "webdev"]
+}

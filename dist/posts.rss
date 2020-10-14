@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+  <channel>
+    <title>web://❤</title>
+    <link>https://parastudios.de</link>
+    <description>A web related blog by Christian Engel</description>
+    <language>en-en</language>
+    <copyright>Christian Engel</copyright>
+    <pubDate>Wed, 14 Oct 2020 10:56:27 GMT</pubDate>
+    <image>
+      <url>https://parastudios.de/assets/web-love.svg</url>
+      <title>web://❤ - Logo</title>
+      <link>https://parastudios.de</link>
+    </image>
+
+    <item>
+      <title>Updates about react hook router</title>
+      <description>It's been about a month, since I released my initial version of hookrouter. Lots of things happened since then.</description>
+      <link>https://parastudios.de/updates-about-react-hook-router</link>
+      <author>Christian Engel</author>
+      <guid>updates-about-react-hook-router</guid>
+      <pubDate>Tue, 30 Apr 2019 11:58:56 GMT</pubDate>
+    </item>
+    <item>
+      <title>Modern and clean routing with hooks</title>
+      <description>A quick experiment about using hooks for routing in a react app turned out to be
+very flexible and powerful.</description>
+      <link>https://parastudios.de/modern-and-clean-routing-with-hooks</link>
+      <author>Christian Engel</author>
+      <guid>modern-and-clean-routing-with-hooks</guid>
+      <pubDate>Thu, 21 Mar 2019 11:17:37 GMT</pubDate>
+    </item>
+    <item>
+      <title>Create a react component as npm module</title>
+      <description>There are a lot of guides out there that advise you to use webpack to wrap up your components before publishing them to npm. This is absolutely not necessary. I would even consider it bad practice. Its much easier without webpack, too.</description>
+      <link>https://parastudios.de/create-a-react-component-as-npm-module</link>
+      <author>Christian Engel</author>
+      <guid>create-a-react-component-as-npm-module</guid>
+      <pubDate>Wed, 06 Mar 2019 14:42:31 GMT</pubDate>
+    </item>
+  </channel>
+</rss>

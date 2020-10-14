@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link href="../assets/favicon.svg" rel="shortcut icon">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Create a react component as npm module - web://❤</title>
+        <meta name="description" content="There are a lot of guides out there that advise you to use webpack to wrap up your components before publishing them to npm. This is absolutely not necessary. I would even consider it bad practice. Its much easier without webpack, too." />
+        <link type="text/css" rel="stylesheet" href="../assets/style.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="/posts.rss" />
+    </head>
+    <body>
+		<header>
+			<a class="blog-title" href="/" title="web://❤"><img src="../assets/web-love-bright.svg" alt="web://❤" /></a>
+            <small>A web related blog by Christian Engel</small>
+		</header>
+		<article>
+			
+            <h1 id="create-a-react-component-as-npm-module">
+              <a class="anchor" href="#create-a-react-component-as-npm-module">
+                Create a react component as npm module
+              </a>
+            </h1><p><img src="./header.jpg" alt="Writing modules for npm"></p>
+<p>There are a lot of guides out there that advise you to use webpack to wrap up
+your components before publishing them to npm. This is absolutely not necessary.
+I would even consider it bad practice. Its much easier without webpack, too.</p>
+<p>Lets say we have created a component, or even better - a collection of
+components that we want to re-use in other projects. In this case, we would move
+the components into a separate project and publish that project on npm. Lets do
+that.</p>
+
+            <h2 id="the-basic-setup">
+              <a class="anchor" href="#the-basic-setup">
+                The basic setup
+              </a>
+            </h2><p>First, create a separate project
+We create an empty folder anywhere where we want to have our project located and
+call <code>npm init</code> inside.</p>
+<p>npm asks a couple of questions about the project and we end up with a 
+<code>package.json</code> file inside the project folder.</p>
+
+            <h2 id="code-structure">
+              <a class="anchor" href="#code-structure">
+                Code structure
+              </a>
+            </h2><p>I would advise to create a subfolder <code>/src</code> inside our project folder so we have
+a place where our component source files can live that is not littered with
+config files or readme files. So we create this subfolder and move our component
+source(s) in there.</p>
+<p>Inside the <code>/src</code>  directory, create an <code>index.js</code> file that will be the entry point
+of your module. It should import all your components and export them again. For
+example like this:</p>
+<pre><code class="language-jsx"><span class="hljs-keyword">import</span> Component1 <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./Component1&#x27;</span>;
+<span class="hljs-keyword">import</span> Component2 <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./Component2&#x27;</span>;
+<span class="hljs-keyword">import</span> Component3 <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./Component3&#x27;</span>;
+
+<span class="hljs-keyword">export</span> {
+    Component1,
+    Component2,
+    Component3
+};</code></pre>
+<p>The reason for this is that somebody who uses your module can import your
+components like this:</p>
+<pre><code class="language-jsx"><span class="hljs-keyword">import</span> {Component1, Component3} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;myExampleModule&#x27;</span>;</code></pre>
+
+            <h2 id="install-react-as-dev-dependency">
+              <a class="anchor" href="#install-react-as-dev-dependency">
+                Install react as dev dependency
+              </a>
+            </h2><p>You certainly want to put additional work into your project and tweak your
+components - especially IDEs will go easier on you, if you have react installed
+in your project. You should install react with the <code>--save-dev</code> flag so it will
+be listed as <code>devDependency</code> and not as regular dependency. This way react is
+only installed for you while working on the project, but not when someone
+installs your module into their app. We will set an option later in this post
+that your module will actually consume the react instance that is used by the
+parent application. </p>
+
+            <h2 id="babel-comes-into-play-but-why-">
+              <a class="anchor" href="#babel-comes-into-play-but-why-">
+                Babel comes into play - but why?
+              </a>
+            </h2><p>You need to know something about npm modules: There is a convention that all
+code inside <code>node_modules</code> should be converted down to ES5. ES6+ code may not run
+on some browsers or some versions of node. Also, when you are developing a react
+application with <code>create-react-app</code> or a custom configured webpack+babel combo,
+the default behavior of webpack is that only source files outside of 
+<code>node_modules</code> will be passed to babel. Other code remains untouched (because of
+that convention I mentioned). So if there is actually a npm module containing
+ES6+ or JSX, your build will fail.</p>
+
+            <h2 id="installing-and-configuring-babel">
+              <a class="anchor" href="#installing-and-configuring-babel">
+                Installing and configuring babel
+              </a>
+            </h2><p>So before we publish on npm, we need to convert our sources. Lets install babel
+for that:</p>
+<pre><code><span class="hljs-built_in">npm</span> install --save-dev @babel/core @babel/cli @babel/preset-env @babel/preset-react</code></pre>
+<p>Okay, that was actually 5 packages instead of &quot;just babel&quot;, so lets explain that
+one by one:</p>
+<p><code>@babel/core</code> - This is actually babel. We don&#39;t want to use babel inside
+some node scripts but from the command line, so we also need <code>@babel/cli</code>. I am
+pretty sure you want to use ES6+ features of javascript so its recommendable
+that we install <code>@babel/preset-env</code> which teaches babel about modern javascript
+features. We are working with react components which are most probably written
+in JSX, so we need to &quot;teach&quot; babel to understand JSX and how react stuff works.
+Thats coming from <code>@babel/preset-react</code>. </p>
+<p>Phew. We&#39;re almost there. Now, we need to create a babel config, so babel knows
+which presets to use. Create a file named <code>babel.config.js</code> in your project root
+and give it the following content:</p>
+<pre><code class="language-jsx"><span class="hljs-built_in">module</span>.exports = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">api</span>) </span>{
+    api.cache(<span class="hljs-literal">true</span>);
+
+    <span class="hljs-keyword">const</span> presets = [ <span class="hljs-string">&quot;@babel/preset-env&quot;</span>, <span class="hljs-string">&quot;@babel/preset-react&quot;</span> ];
+    <span class="hljs-keyword">const</span> plugins = [ ];
+
+    <span class="hljs-keyword">return</span> {
+        presets,
+        plugins
+    };
+};</code></pre>
+<p>This tells babel to use those two presets we installed before and that
+we do not use any special plugins right now.</p>
+
+            <h2 id="the-build-script">
+              <a class="anchor" href="#the-build-script">
+                The build script
+              </a>
+            </h2><p>Now we need a command that converts our sources before they are published to
+npm. Open your <code>package.json</code> and add the key <code>prepublishOnly</code> to the scripts 
+object:</p>
+<pre><code class="language-json">&quot;scripts&quot;: {
+    &quot;prepublishOnly&quot;: &quot;babel ./src --out-dir ./dist -s inline&quot;
+},</code></pre>
+<p>Okay, what does this do? It calls babel from the command line and tells it:
+&quot;Please convert everything inside <code>./src</code> into the output folder <code>./dist</code>. Also
+please create sourcemaps (-s) and inline  them into the javascript files.</p>
+<p>If you execute now <code>npm run prepublishOnly</code>, a <code>/dist</code> folder will appear inside
+your project containing the converted files. Jay! I highly recommend adding this
+folder to your <code>.gitignore</code> file - you don&#39;t need it in your repository.</p>
+<p>Why is the script named <code>prepublishOnly</code>? Thats a &quot;magic keyword&quot; for npm. This
+script will be called automatically whenever you are going to publish anything
+online on npm. So you cannot forget your compile step 😁</p>
+
+            <h2 id="react-as-shared-dependency">
+              <a class="anchor" href="#react-as-shared-dependency">
+                React as shared dependency
+              </a>
+            </h2><p>It is especially frustrating if you use react hooks and forget to add react as a
+peer dependency. If you mention react as normal dependency, your npm module will
+receive its own, separate copy of react that is not shared with the
+application that will consume your module in the end. Hooks for example cannot
+work in this case.</p>
+<p>Set react as <code>peerDependency</code> in your <code>package.json</code> like this:</p>
+<pre><code class="language-json">&quot;peerDependencies&quot;: {
+    &quot;react&quot;: &quot;^16.8.0&quot;
+},</code></pre>
+<p>Copy the react entry from your <code>devDependencies</code> field to <code>peerDependencies</code>.
+Also, don&#39;t be too strict, here. If you use Hooks, you need at least react 
+<code>16.8.0</code> - if not, an older version of react might be fine. The <code>^</code> at the
+beginning of the version number means &quot;anything from here or above&quot;. This is
+important since the applications that will consume your module might use wildly
+different versions of react. And since your module and the parent app will share
+the same instance of react, you need to be as compatible as possible.</p>
+
+            <h2 id="last-preparations-to-your-package-json">
+              <a class="anchor" href="#last-preparations-to-your-package-json">
+                Last preparations to your package.json
+              </a>
+            </h2><p>We want to tell npm exactly which files are going to be published, since only
+the contents of the <code>/dist</code> folder are necessary for anyone installing our
+component(s). For this purpose, you can add a file  property to your 
+<code>package.json</code> containing a list of files and/or folders to publish (the
+package.json is always included in the published files - read more in the <a href="https://docs.npmjs.com/files/package.json#files">npm
+help</a>. </p>
+<pre><code class="language-json">&quot;files&quot;: [
+    &quot;dist/*&quot;
+],</code></pre>
+<p>The little star behind the folder name is a <a href="https://en.wikipedia.org/wiki/Glob_(programming)">glob pattern</a>, 
+telling npm &quot;everything inside dist&quot;.</p>
+<p>So last but not least we need to define an entry point for our module, since
+when we publish the module as <code>exampleModule</code> and someone imports or requires
+this module, npm needs to know which javascript file inside our module is the
+actual &quot;default&quot; file. </p>
+<p>Remember the <code>index.js</code> file you created in <code>/src</code> before? This file has also been
+moved to <code>/dist</code> and should work as our module index file. So we add it
+explicitly as entry point to the package.json:</p>
+<pre><code class="language-json">&quot;main&quot;: &quot;dist/index.js&quot;,</code></pre>
+
+            <h2 id="now-lets-publish">
+              <a class="anchor" href="#now-lets-publish">
+                Now lets publish
+              </a>
+            </h2><p>I will not cover how you create an account on npmjs.com and login to that
+account in the command line. I assume you already did that. I also assume you
+looked up that the name of your module was not yet taken and chose a unique
+name. All you need to do now is calling <code>npm publish</code>.</p>
+<p>Keep in mind that when you make changes to your project and want to publish them
+again, you need to update the version  field in your <code>package.json</code> according to 
+<a href="https://semver.org/">semver</a>. If you don&#39;t change the version, you cannot
+publish again.</p>
+
+            <h3 id="comments">
+              <a class="anchor" href="#comments">
+                Comments
+              </a>
+            </h3><p>You can vote and comment on this blog post on reddit.
+[<a href="https://www.reddit.com/r/reactjs/comments/ayaypd/blog_how_to_publish_react_related_things_on_npm/%5D">https://www.reddit.com/r/reactjs/comments/ayaypd/blog_how_to_publish_react_related_things_on_npm/]</a></p>
+
+		</article>
+		<aside>
+		    <nav class="outline">
+        <h3>Post Content</h3>
+        <a href="#the-basic-setup" class="l2">The basic setup</a>
+<a href="#code-structure" class="l2">Code structure</a>
+<a href="#install-react-as-dev-dependency" class="l2">Install react as dev dependency</a>
+<a href="#babel-comes-into-play-but-why-" class="l2">Babel comes into play - but why?</a>
+<a href="#installing-and-configuring-babel" class="l2">Installing and configuring babel</a>
+<a href="#the-build-script" class="l2">The build script</a>
+<a href="#react-as-shared-dependency" class="l2">React as shared dependency</a>
+<a href="#last-preparations-to-your-package-json" class="l2">Last preparations to your package.json</a>
+<a href="#now-lets-publish" class="l2">Now lets publish</a>
+<a href="#comments" class="l3">Comments</a>
+</nav>
+            <nav class="posts">
+    <h3>Recent posts</h3>
+    <nav class="postList">
+    <a href="../updates-about-react-hook-router/"><span>2019-04-30 13:58:56</span> <span>Updates about react hook router</span></a>
+<a href="../modern-and-clean-routing-with-hooks/"><span>2019-03-21 12:17:37</span> <span>Modern and clean routing with hooks</span></a>
+<a href="../create-a-react-component-as-npm-module/"><span>2019-03-06 15:42:31</span> <span>Create a react component as npm module</span></a>
+    </nav>
+</nav>	
+        </aside>
+		<nav class="marginal">
+            <a href="https://twitter.com/paratron">Follow me on Twitter</a>
+            <a href="https://github.com/users/paratron">Follow me on Github</a>
+            <a href="/posts.rss">Blog RSS</a>
+        </nav>
+        <button class="darkModeButton" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        <script>
+            function toggleDarkMode(){
+                document.querySelector("html").toggleAttribute("data-dark");
+                localStorage.setItem("dark", document.querySelector("html").getAttribute("data-dark"));
+            }
+            if(localStorage.getItem("dark") !== null){
+                toggleDarkMode();
+            }
+        </script>
+    </body>
+</html>

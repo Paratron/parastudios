@@ -1,0 +1,26 @@
+{
+  "name": "blog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "site": {
+    "title": "web://❤",
+    "url": "https://parastudios.de",
+    "description": "A web related blog by Christian Engel"
+  },
+  "scripts": {
+    "build": "node build.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "fs-extra": "8.1.0",
+    "highlight.js": "10.2.1",
+    "sass": "1.26.11",
+    "marked": "1.2.0"
+  },
+  "dependencies": {
+    "node-fetch": "2.6.1"
+  }
+}

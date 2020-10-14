@@ -1,0 +1,360 @@
+$onMobile: "screen and (max-width: 700px)";
+$onDesktop: "screen and (min-width: 700px)";
+
+:root {
+  --textColorBright: #111;
+  --textColor: #333;
+  --backgroundColor: #eee;
+  --codeBackground: #333;
+  --codeColor: #fff;
+  --dividerColor: #ccc;
+  --blockQuoteBackground: rgba(0, 0, 0, .1);
+  --linkColor: blue;
+  --linkColorVisited: darkblue;
+  --shadow: 2px 2px 5px rgba(0, 0, 0, .3);
+}
+
+@mixin darkColors {
+  --textColorBright: #fff;
+  --textColor: #eee;
+  --backgroundColor: #333;
+  --codeBackground: #111;
+  --codeColor: #fff;
+  --dividerColor: #000;
+  --blockQuoteBackground: rgba(255, 255, 255, .1);
+  --linkColor: red;
+  --linkColorVisited: darkred;
+  --shadow: 2px 2px 5px rgba(0, 0, 0, .3);
+}
+
+@mixin dark {
+  img {
+    opacity: .75;
+    transition: opacity .5s ease-in-out;
+  }
+  img:hover {
+    opacity: 1;
+  }
+
+  .blog-title {
+    display: inline-block;
+
+    img {
+      opacity: 0;
+    }
+
+    background: url(./web-love.svg) center no-repeat;
+    background-size: contain;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    @include darkColors;
+  }
+  @include dark;
+
+  .darkModeButton {
+    display: none;
+  }
+}
+
+html[data-dark] {
+  @include darkColors;
+  @include dark;
+
+  .darkModeButton {
+    &:before {
+      content: "🌞 ";
+    }
+  }
+}
+
+body {
+  background: var(--backgroundColor);
+  color: var(--textColor);
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 10px 10px 0;
+
+  max-width: 950px;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: 70% 30%;
+  grid-template-rows: 80px auto;
+
+  & > aside {
+    padding: 20px 0 20px 40px;
+
+    nav {
+      margin-bottom: 40px;
+    }
+
+    a {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .outline {
+      .l3 {
+        padding-left: 5px;
+      }
+
+      .l4, .l5, .l6 {
+        padding-left: 10px;
+      }
+    }
+
+    .postList {
+      a {
+        font-size: 0;
+        text-decoration: none;
+
+        span {
+          display: block;
+
+          &:first-child {
+            font-size: 12px;
+          }
+
+          &:last-child {
+            font-size: 14px;
+          }
+        }
+
+        &:hover {
+          span:last-child {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+}
+
+.darkModeButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: var(--blockQuoteBackground);
+  padding: 5px;
+  border: none;
+  color: var(--textColor);
+
+  &:before {
+    content: "🌙 ";
+  }
+}
+
+.profile {
+  img {
+    display: block;
+    border-radius: 50%;
+    width: 60%;
+    box-shadow: var(--shadow);
+  }
+
+  h1 {
+    font-size: 1.3em;
+    margin-bottom: 0;
+  }
+
+  h2 {
+    margin-top: 0;
+    font-size: 1em;
+    opacity: .8;
+  }
+
+  p {
+    font-size: .8em;
+  }
+}
+
+.postListing {
+  h3 {
+    margin-bottom: 0;
+  }
+
+  small {
+    font-size: .6em;
+  }
+
+  & + .postListing {
+    border-top: var(--dividerColor) solid 1px;
+    margin-top: 30px;
+  }
+}
+
+code{
+  color: var(--codeColor);
+}
+
+a {
+  color: var(--linkColor);
+
+  &:visited {
+    color: var(--linkColorVisited);
+  }
+}
+
+h1 {
+  font-size: 1.8em;
+  line-height: 1.2em;
+  color: var(--textColorBright);
+
+  @media #{$onMobile}{
+    font-size: 1.5em;
+  }
+}
+
+* + h2 {
+  margin-top: 2rem;
+
+  @media #{$onDesktop}{
+    margin-top: 4rem;
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  a {
+    color: var(--textColor);
+    text-decoration: none;
+    position: relative;
+
+    &:visited {
+      color: var(--textColor);
+    }
+
+    &:hover {
+      &:before {
+        content: "#";
+        position: absolute;
+        top: 1px;
+        left: -30px;
+        opacity: .3;
+      }
+    }
+  }
+}
+
+header {
+  position: relative;
+  @media #{$onDesktop}{
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 2;
+  }
+
+  small {
+    margin-left: 10px;
+
+    @media #{$onMobile}{
+      display: block;
+      font-size: .6em;
+      margin: 10px 0 0;
+    }
+  }
+}
+
+nav.marginal {
+  @media #{$onDesktop}{
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    padding-left: 40px;
+  }
+
+  a {
+    margin-bottom: 10px;
+    display: block;
+    font-size: .8em;
+  }
+}
+
+article {
+  line-height: 1.6em;
+  grid-column-start: 1;
+  grid-column-end: 2;
+
+  grid-row-start: 2;
+  grid-row-end: 3;
+
+  p {
+    code {
+      background: #000;
+      border-radius: 5px;
+      padding: 4px 5px 2px;
+      white-space: nowrap;
+    }
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    box-shadow: var(--shadow);
+  }
+}
+
+blockquote {
+  border-left: var(--textColorBright) solid 5px;
+  background: var(--blockQuoteBackground);
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  margin-left: 0;
+  margin-right: 0;
+  color: var(--textColorBright);
+}
+
+blockquote p {
+  margin: 0;
+}
+
+pre {
+  background: var(--codeBackground);
+  padding: 20px;
+  overflow: auto;
+  box-shadow: var(--shadow);
+}
+
+@media screen and (max-width: 700px) {
+  .darkModeButton {
+    font-size: 0;
+    width: 48px;
+    height: 48px;
+
+    &:before {
+      font-size: 16px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+
+    aside {
+      order: 1;
+      padding: 0;
+
+      .posts {
+        display: none;
+      }
+    }
+
+    article {
+      order: 2;
+    }
+
+    .marginal{
+      order: 3;
+    }
+  }
+}
+
+@import "../node_modules/highlight.js/scss/night-owl";
