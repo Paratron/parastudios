@@ -1,6 +1,13 @@
 const {getGithubData} = require("./github");
 
-const frame = async (site, title, description, body) => {
+const twitterCardMeta = (site, title, description, image) =>
+    `<meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="@paratron">
+    <meta name="twitter:title" content="${title}">
+    <meta name="twitter:description" content="${description}">
+    <meta name="twitter:image" content="${image}">`;
+
+const frame = async (site, title, description, body, shareImage = "https://parastudios.de/assets/web-love-bright.svg") => {
     const user = await getGithubData();
 
     return `<!DOCTYPE html>
@@ -13,6 +20,7 @@ const frame = async (site, title, description, body) => {
         ${description ? `<meta name="description" content="${description}" />` : ""}
         <link type="text/css" rel="stylesheet" href="../assets/style.css" />
         <link rel="alternate" type="application/rss+xml" title="RSS" href="/posts.rss" />
+        ${twitterCardMeta(site, title, description, shareImage)}
     </head>
     <body>
 		<header>
