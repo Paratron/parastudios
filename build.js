@@ -36,7 +36,8 @@ const writeFile = utils.promisify(fs.writeFile);
 
 const fullData = {
     pages: [],
-    posts: [],
+    posts: [], // Published posts
+    fullPosts: [], // Published and draft posts
     site: require('./package').site
 };
 
