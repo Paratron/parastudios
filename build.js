@@ -3,6 +3,7 @@ const utils = require('util');
 const marked = require('marked');
 const hljs = require("highlight.js");
 
+const host = 'https://parastudios.de';
 const buildTargetDirectory = './docs';
 
 /**
@@ -64,6 +65,28 @@ const buildPostOutlineFromLexedMarkdown = (lex) => {
     return outline;
 };
 
+/**
+ * For sharing, its better to have a custom image extracted from the post.
+ */
+const getShareImageFromPost = (lex, slug) => {
+    const url = require("url");
+
+    for(let i = 0; i < lex.length; i++){
+        const elm = lex[i];
+        if(elm.type === "paragraph"){
+            if(elm.tokens && elm.tokens.length){
+                const t = elm.tokens[0];
+
+                if(t.type === "image"){
+                    return url.resolve(`${slug}/`, t.href);
+                }
+            }
+        }
+    }
+
+    return undefined;
+}
+
 fs.ensureDir(`${buildTargetDirectory}/assets`);
 readDir('./assets')
     .then(assets => assets.forEach(
@@ -82,6 +105,7 @@ readDir('./posts').then(async (folders) => {
                 files,
                 folder,
                 publishTime: (new Date()).toString(),
+                shareImage: undefined,
                 content: ''
             },
             require(`./posts/${folder}/meta`)
@@ -92,7 +116,10 @@ readDir('./posts').then(async (folders) => {
         if (hasMarkdownIndex) {
             const markdownSource = await readFile(`./posts/${folder}/index.md`, 'utf8');
             post.content = marked(markdownSource);
-            post.outline = buildPostOutlineFromLexedMarkdown(marked.lexer(markdownSource));
+
+            const lexedSource = marked.lexer(markdownSource);
+            post.outline = buildPostOutlineFromLexedMarkdown(lexedSource);
+            post.shareImage = getShareImageFromPost(lexedSource, `${host}/${post.slug}`);
         }
 
         return post;

@@ -29,7 +29,7 @@ const post = (data, post) => {
             ${recentPosts(post.draft ? data.fullPosts : data.posts)}	
         </aside>`;
 
-    return frame(data.site, post.title, post.description, body);
+    return frame(data.site, post.title, post.description, body, post.shareImage);
 };
 
 module.exports = post;
