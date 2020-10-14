@@ -7,7 +7,7 @@ const twitterCardMeta = (site, title, description, image) =>
     <meta name="twitter:description" content="${description}">
     <meta name="twitter:image" content="${image}">`;
 
-const frame = async (site, title, description, body, shareImage = "https://parastudios.de/assets/web-love-bright.svg") => {
+const frame = async (site, title, description, body, shareImage = "https://parastudios.de/assets/social.jpg") => {
     const user = await getGithubData();
 
     return `<!DOCTYPE html>
