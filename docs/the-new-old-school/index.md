@@ -4,14 +4,15 @@
 
 Hello World. Again.
 
-This blog was offline now for some time, since that day where I wanted to update my instance of [ghost] and was unable
+This blog was offline now for some time, since that day where I wanted to update my instance of [ghost](https://ghost.org) and was unable
 to do so. I don't remember exactly what went wrong that day but I messed it up completely. But I wasn't sad about shutting it
 down, since ghost turned out to be really complicated to handle. Nothing comparable to its ancestor wordpress and not at all
-as flexible.
+as flexible. Everything had to be done through the ghost CLI on the server. But not with your standard linux user, no no.
+And I just wanted to write some blog posts.
 
 For the new version of the blog I wanted to have a static site again. Good, old, humble, static html. There was a lot of buzz
 at the SSG front in the recent years. Many developers realized that client side rendered react pages are not the best idea of
-the day and invented things like [gatsby] or [next] to regain a bit of sanity.
+the day and invented things like [gatsby](https://www.gatsbyjs.com/) or [next](https://nextjs.org/) to regain a bit of sanity.
 
 I work with react a lot in my daily job and since I like the component based approach in building complex applications with it,
 using it for simple - mostly static - websites still feels like using the wrong tool for that job.
@@ -19,7 +20,7 @@ using it for simple - mostly static - websites still feels like using the wrong 
 I wanted something simple. Write markdown, put it in folders and have it rendered to HTML, using some simple templates.
 
 I am a javascript guy, so I wanted to stay in my comfort zone - even without react. There are other approaches out there 
-like [11ty] which promises to be simpler. Nice!
+like [11ty](https://www.11ty.dev/) which promises to be simpler. Nice!
 
 But after trying to understand how it works for over half an hour, my mind told me: "hey. I know you are old now and don't
 want to re-invent the wheel like a teenager anymore, but... markdown, template, a bit of styling. Can't be that hard to glue
