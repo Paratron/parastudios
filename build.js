@@ -3,6 +3,8 @@ const utils = require('util');
 const marked = require('marked');
 const hljs = require("highlight.js");
 
+const buildTargetDirectory = './docs';
+
 marked.setOptions({
     highlight: function(code, lang) {
         const result = lang ? hljs.highlight(lang, code) : hljs.highlightAuto(code);
@@ -51,8 +53,8 @@ const buildOutlineFromLexedMarkdown = (lex) => {
     return outline;
 };
 
-fs.ensureDir('./dist/assets');
-readDir('./assets').then(assets => assets.forEach(asset => fs.copyFile(`./assets/${asset}`, `./dist/assets/${asset}`)));
+fs.ensureDir(`${buildTargetDirectory}/assets`);
+readDir('./assets').then(assets => assets.forEach(asset => fs.copyFile(`./assets/${asset}`, `${buildTargetDirectory}/assets/${asset}`)));
 
 readDir('./posts').then(async (folders) => {
     console.log('Pre-Pass: Gathering post meta');
@@ -96,15 +98,15 @@ readDir('./posts').then(async (folders) => {
 
         function renderPost(post){
             const html = views.post(fullData, post);
-            fs.ensureDir(`./dist/${post.slug}`);
-            writeFile(`./dist/${post.slug}/index.html`, html);
-            post.files.forEach(f => fs.copyFile(`./posts/${post.folder}/${f}`, `./dist/${post.slug}/${f}`));
+            fs.ensureDir(`${buildTargetDirectory}/${post.slug}`);
+            writeFile(`${buildTargetDirectory}/${post.slug}/index.html`, html);
+            post.files.forEach(f => fs.copyFile(`./posts/${post.folder}/${f}`, `${buildTargetDirectory}/${post.slug}/${f}`));
         }
 
         posts.forEach(renderPost);
 
-        writeFile(`./dist/posts.rss`, views.rss(fullData));
-        writeFile(`./dist/index.html`, await views.blogIndex(fullData, fullData.posts));
-        writeFile(`./dist/_drafts.html`, views.postList(fullData, fullData.fullPosts.filter(p => p.draft)));
+        writeFile(`${buildTargetDirectory}/posts.rss`, views.rss(fullData));
+        writeFile(`${buildTargetDirectory}/index.html`, await views.blogIndex(fullData, fullData.posts));
+        writeFile(`${buildTargetDirectory}/_drafts.html`, views.postList(fullData, fullData.fullPosts.filter(p => p.draft)));
     });
 });
