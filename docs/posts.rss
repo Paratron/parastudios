@@ -6,13 +6,21 @@
     <description>A web related blog by Christian Engel</description>
     <language>en-en</language>
     <copyright>Christian Engel</copyright>
-    <pubDate>Wed, 14 Oct 2020 19:27:58 GMT</pubDate>
+    <pubDate>Wed, 14 Oct 2020 21:34:00 GMT</pubDate>
     <image>
       <url>https://parastudios.de/assets/web-love.svg</url>
       <title>web://❤ - Logo</title>
       <link>https://parastudios.de</link>
     </image>
 
+    <item>
+      <title>The new old school</title>
+      <description>My blog is finally online again. This time as a statically generated page. Here is how I made it.</description>
+      <link>https://parastudios.de/the-new-old-school</link>
+      <author>Christian Engel</author>
+      <guid>the-new-old-school</guid>
+      <pubDate>Wed, 14 Oct 2020 21:22:00 GMT</pubDate>
+    </item>
     <item>
       <title>Updates about react hook router</title>
       <description>It's been about a month, since I released my initial version of hookrouter. Lots of things happened since then.</description>

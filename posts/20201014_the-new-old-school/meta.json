@@ -1,0 +1,7 @@
+{
+  "title": "The new old school",
+  "slug": "the-new-old-school",
+  "publishTime": "2020-10-14 23:22:00",
+  "description": "My blog is finally online again. This time as a statically generated page. Here is how I made it.",
+  "tags": ["blog", "ssg", "github", "markdown", "javascript", "webdev"]
+}
