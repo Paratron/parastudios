@@ -9,7 +9,9 @@
     "description": "A web related blog by Christian Engel"
   },
   "scripts": {
-    "build": "node build.js",
+    "build_style": "sass ./assets/style.scss ./assets/style.css --style compressed",
+    "build_page": "node build.js",
+    "build": "npm run build_style && npm run build_page",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
