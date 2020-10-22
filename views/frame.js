@@ -21,6 +21,7 @@ const frame = async (site, title, description, body, shareImage = "https://paras
         <link type="text/css" rel="stylesheet" href="../assets/style.css" />
         <link rel="alternate" type="application/rss+xml" title="RSS" href="/posts.rss" />
         ${twitterCardMeta(site, title, description, shareImage)}
+        <script async defer data-domain="parastudios.de" src="https://plausible.io/js/plausible.js"></script>
     </head>
     <body>
 		<header>
