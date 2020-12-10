@@ -24,195 +24,51 @@ modules with jest and especially update the return values of module functions ac
 		</header>
 		<article>
 			
-            <h1 id="simple-sessions-with-nextjs">
-              <a class="anchor" href="#simple-sessions-with-nextjs">
-                Simple sessions with nextJS
+            <h1 id="mocking-modules-with-jest-and-typescript">
+              <a class="anchor" href="#mocking-modules-with-jest-and-typescript">
+                Mocking modules with jest and typescript
               </a>
-            </h1><p>nextJS doesn&#39;t have a mechanism for handling server side sessions out of the box. In order to keep users authenticated or
-provide multi-step forms across several pages, you need sessions. I&#39;ll explain how you use sessions in nextJS in this article. </p>
+            </h1><p>Since it took me some time to understand the behaviour and the jest docs don&#39;t tell much about it, I wanted to write down how to mock
+modules with jest and especially update the return values of module functions across your tests.</p>
+<p>Consider you want to test a function called <code>someFunctionToTest</code> from a module called <code>moduleA</code>:</p>
+<pre><code class="language-typescript"><span class="hljs-keyword">import</span> {someFunctionToTest} <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;moduleA&quot;</span>;
 
-            <h2 id="what-are-nextjs-sessions-why-do-i-need-them-">
-              <a class="anchor" href="#what-are-nextjs-sessions-why-do-i-need-them-">
-                What are nextJS sessions, why do I need them?
-              </a>
-            </h2><p>There are cases where you want to keep some data about a user that is connected to the users while they navigate across
-your site and move across several pages. A user session is a good example. The users provide their login data on a login
-page, it will be verified, and the server remembers the individual users while they navigate around.</p>
-<p>The information <em>which</em> user is authenticated need to be kept server side, because the server needs it to verify
-if the user can access certain information or perform actions. If the information is kept in the browser and sent to the 
-server, its easy to manipulate and masquerade as a different user.</p>
-<p>Other things like items in a shopping basket are a good candidate to be kept in a user session as well.</p>
-<p>You never know if a user left your site or just stays on a certain page for a long time. Or maybe his network connection
-drops for a short time and the user reconnects through a different connection. Because of that, session data must be kept
-for some time. The timeout for such sessions can be very different based on the context. Your shopping cart session might
-be preserved for days, in case you return to the shop. But your bank will certainly already drop your session after ten minutes. </p>
-<p>[excalidraw session functionality diagram]
-<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Session">More information about how sessions are handled over HTTP can be found on MDN</a>.</p>
-<p>The HTTP protocol is stateless. This means that the server cannot who requested which document by default. To solve this problem,
-usually the browser sends a cookie along with each request which contains a unique identifier that remains the same across
-all navigation and requests. This identifier needs to be a random string or number of enough entropy, so it cannot be guessed.
-If someone is able to guess the session id and copies it - the server cannot know if the requests are legitimate, or a session has been stolen.
-Since the cookies with the session id are sensitive data, you should only use sessions over https connections. Otherwise,
-the cookies could be captured and stolen.</p>
+test(<span class="hljs-string">&quot;It does something&quot;</span>, <span class="hljs-function">() =&gt;</span> {
+    expect(someFunctionToTest()).toEqual({something: <span class="hljs-literal">true</span>});
+});</code></pre>
+<p>Now you notice that the function relies on calling the method <code>helper</code> from <code>moduleB</code>. You want to mock that function
+and simulate a return value:</p>
+<pre><code class="language-typescript"><span class="hljs-keyword">import</span> {someFunctionToTest} <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;moduleA&quot;</span>;
+<span class="hljs-keyword">import</span> {helper} <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;moduleB&quot;</span>;
 
-            <h2 id="enabling-server-side-sessions-in-nextjs">
-              <a class="anchor" href="#enabling-server-side-sessions-in-nextjs">
-                Enabling server side sessions in nextJS
-              </a>
-            </h2><p>There is no built-in server side session mechanism in nextJS at the moment. You need to install a separate module from npm to 
-add this functionality to your nextJS project. I created <a href="https://www.npmjs.com/package/next-server-session"><code>next-server-session</code></a>
-to add server side session functionality to a nextJS 10.x+ project I am working on right now.</p>
+jest.mock(<span class="hljs-string">&quot;moduleB&quot;</span>);
 
-            <h2 id="configuring-nextjs-sessions">
-              <a class="anchor" href="#configuring-nextjs-sessions">
-                Configuring nextJS sessions
-              </a>
-            </h2><p>The module requires to be initialized and configured once when your nextJS instance boots. This is being done in your <code>next.config.js</code> file.
-If no such file exists in your project folder, you can create the file and paste the following content:</p>
-<pre><code class="language-javascript"><span class="hljs-keyword">const</span> { PHASE_DEVELOPMENT_SERVER, PHASE_PRODUCTION_SERVER } = <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;next/constants&quot;</span>);
+test(<span class="hljs-string">&quot;It does something&quot;</span>, <span class="hljs-function">() =&gt;</span> {
+    (helper <span class="hljs-keyword">as</span> jest.Mock).mockReturnValue(<span class="hljs-literal">true</span>);
+    expect(someFunctionToTest()).toEqual({something: <span class="hljs-literal">true</span>});
+});
 
-<span class="hljs-built_in">module</span>.exports = <span class="hljs-function">(<span class="hljs-params">phase, { defaultConfig }</span>) =&gt;</span> {
-    <span class="hljs-keyword">if</span>(phase === PHASE_PRODUCTION_SERVER || phase === PHASE_DEVELOPMENT_SERVER){
-        <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;next-server-session&quot;</span>).configure();
-    }
+test(<span class="hljs-string">&quot;It does something else&quot;</span>, <span class="hljs-function">() =&gt;</span> {
+    (helper <span class="hljs-keyword">as</span> jest.Mock).mockReturnValue(<span class="hljs-literal">false</span>);
+    expect(someFunctionToTest()).toEqual({something: <span class="hljs-literal">false</span>});
+});</code></pre>
+<p>The trick - and its a bit counter-intuitive - is to import the mocked function as well. See line 2 where we import the <code>helper</code> method
+into our test file. This is acutally the mock function. The reason is that jest does some code shifting and altough the call to <code>jest.mock</code> 
+occures later, it will be executed before any imports are made. Therefore, <code>helper</code> is an instance of <code>jest.fn()</code> in our test file.</p>
+<p>Now we can update the return values of our mocked function by calling <code>mockedFunction.mockReturnValue()</code>. There is only one catch: typescript
+will complain that the imported <code>helper</code> has no function <code>mockReturnValue</code> to be called. Thats because typescript does not know that <code>helper</code>
+is not the real thing but a mocked function. We can get around it by casting the type locally to <code>jest.Mock</code>. </p>
 
-    <span class="hljs-keyword">return</span> defaultConfig;
-}</code></pre>
-<p>Since the next config is used for several purposes in your nextJS project, we need to tell next that we only want to initialize
-the sessions feature when a development or production server instance is running. This is done through the <code>phase</code> argument that
-is passed to the configure function. We check if the <code>phase</code> is either production server or development server and only initialize
-the session module if thats the case.</p>
-<p>Calling the <code>configure()</code> method without any arguments initializes the session module with default settings: The session data is kept
-in memory and a session will expire after 30 minutes without action.</p>
-<p>The configure function can be passed an object <code>{sessionStore, cookieHandler}</code> which optionally set handlers for getting / setting the session
-data and handling the cookie.</p>
-
-            <h2 id="access-the-session-in-nextjs-page-routes">
-              <a class="anchor" href="#access-the-session-in-nextjs-page-routes">
-                Access the session in nextJS page routes
-              </a>
-            </h2><p>Lets assume you created a page <code>/shoppingCart</code> which should display items the user has put into their shopping cart before. We create a
-<a href="https://nextjs.org/docs/routing/introduction">route in nextJS</a> which handles the request. To dynamically pass data to the page components,
-we create a <a href="https://nextjs.org/docs/basic-features/data-fetching#getserversideprops-server-side-rendering"><code>getServerSideProps</code></a> method.</p>
-<pre><code class="language-typescript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getServerSideProps</span>(<span class="hljs-params">context: GetServerSidePropsContext</span>)</span>{
-    <span class="hljs-keyword">const</span> {cart = {}} = <span class="hljs-keyword">await</span> getSessionData(context);
-
-    <span class="hljs-keyword">return</span> {
-        props: {
-            cart
-        }   
-    }
-}</code></pre>
-<p>This code tries to fetch the <code>cart</code> property from the session and initializes it with an empty object <code>{}</code> if the cart property
-has not yet been created in the session. The function passes the <code>cart</code> array to the page component as a prop to be rendered.</p>
-<p>When accessing sessions in <code>getServerSideProps()</code> methods, you always need to pass the <code>context</code> object from nextJS to the 
-session functions. They will figure out if a cookie exists, what session id is being used (if any), fetch or set the session data and<br>return a promise. </p>
-<p>A promise is returned because the session store <em>may</em> be asynchronous. While the default in-memory storage is synchronous, the library
-has been built with other options in mind. When storing session data on the HDD or in a database, the response will always be async.  </p>
-
-            <h2 id="use-the-session-in-nextjs-api-routes">
-              <a class="anchor" href="#use-the-session-in-nextjs-api-routes">
-                Use the session in nextJS API routes
-              </a>
-            </h2><p>To stay with the shopping cart example, we <a href="https://nextjs.org/docs/api-routes/introduction">create an nextJS API endpoint</a> that places items into our shopping cart:</p>
-<pre><code class="language-typescript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">handler</span>(<span class="hljs-params">req: NextApiReqest, res: NextApiResponse</span>)</span>{
-    <span class="hljs-keyword">const</span> {cart = {}} = <span class="hljs-keyword">await</span> getSessionData(req, res);
-    <span class="hljs-keyword">const</span> {articleId, amount} = req.body;
-
-    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">await</span> validateArticleId(articleId)){
-        cart[articleId] = (cart[articleId] || <span class="hljs-number">0</span>) + amount;
-        <span class="hljs-keyword">await</span> setSessionData(req, res, {cart});
-        res.end(<span class="hljs-string">&quot;ok&quot;</span>);
-        <span class="hljs-keyword">return</span>;
-    }
-
-    res.statusCode = <span class="hljs-number">400</span>;
-    res.end(<span class="hljs-string">&quot;Bad request&quot;</span>);
-}</code></pre>
-<p>What happened here? We fetched the <code>cart</code> object from the session - if there is any. The API endpoint requires two arguments:
-<code>articleId</code> and <code>amount</code>. We validate, if the article id is valid and can be placed in the chart with <code>validateArticleId()</code> (you
-would need to write that function yourself).</p>
-<p>The idea of the <code>chart</code> objects design is that the object keys hold the article id while the object values keep the amounts. Therefore,
-we use the existing amount (if any) or zero when the article is new in the chart and add the requested amount on top.</p>
-<p>After that, we write our cart back to the session. </p>
-<p>Note that we don&#39;t have a <code>context</code> object like in <code>getServerSideProps()</code> functions available. We pass the <code>req</code> and <code>res</code> objects to 
-the session functions instead. </p>
-
-            <h2 id="setting-nextjs-session-data">
-              <a class="anchor" href="#setting-nextjs-session-data">
-                Setting nextJS session data
-              </a>
-            </h2><p>There are two methods to write data to your session: <code>setSessionData()</code> and <code>replaceSessionData()</code>. </p>
-<p>The one I mostly use is <code>setSessionData()</code> like in the example above. The function takes an object and merges it into the
-existing session object. If no session exists, a new one will be created. I prefer this method because one place that writes
-data to the session does not need to know about other places and which data they are writing to the session. You will only overwrite
-local parts of the session and not accidentally destroy something else.</p>
-<p>That is the case with <code>replaceSessionData()</code>. It also takes an object as argument but will replace the whole session data with
-that object. This function is still useful when you for example want to switch users and make sure to drop all data from the session
-that belonged to the previous user.</p>
-<p>Note that the set and replace methods are both asynchronous and return a promise. So if you want to write to your session several
-times in one <code>getServerSideProps()</code> or API handler, make sure you <code>await</code> the finalization of the write process so you don&#39;t get
-weird effects with invalid session data. </p>
-
-            <h2 id="destroying-a-nextjs-session">
-              <a class="anchor" href="#destroying-a-nextjs-session">
-                Destroying a nextJS session
-              </a>
-            </h2><p>A session can be deleted along with its cookie by calling the method <code>destroySession()</code>. You would do this for example in a logout function.</p>
-<p>The default in-memory session store of our nextJS session module has a built in timeout of 30 minutes. 
-If session data has not been accessed for reading or updating, it will be garbage collected and removed. </p>
-<p>If users with an existing session cookie return after that amount of time, it will be for them as if they were never there
-and just established a fresh session. They will be logged out, or their cart will be empty.  </p>
-<p>You can decrease that timeout or even increase it - but keep in mind that a longer timeout means more sessions will be kept
-in memory and may overload your server in extreme cases.</p>
-<p>Here is an example on how we pass a different timeout configuration to the memory session store. It is being done in the
-<code>next.config.js</code> upon server startup (we covered the configuration before):</p>
-<pre><code class="language-typescript"><span class="hljs-keyword">const</span> { PHASE_DEVELOPMENT_SERVER, PHASE_PRODUCTION_SERVER } = <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;next/constants&quot;</span>);
-
-<span class="hljs-built_in">module</span>.<span class="hljs-built_in">exports</span> = <span class="hljs-function">(<span class="hljs-params">phase, { defaultConfig }</span>) =&gt;</span> {
-    <span class="hljs-keyword">if</span>(phase === PHASE_PRODUCTION_SERVER || phase === PHASE_DEVELOPMENT_SERVER){
-        <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;next-server-session&quot;</span>).configure({
-            sessionStore: createMemorySessionStore({
-                maxSessionAgeMS: <span class="hljs-number">10</span> * <span class="hljs-number">60</span> * <span class="hljs-number">1000</span> <span class="hljs-comment">// 10 minutes</span>
-            })                    
-        });
-    }
-
-    <span class="hljs-keyword">return</span> defaultConfig;
-}</code></pre>
-<p>We are passing an object to the <code>configure()</code> method. The object contains a custom instance of <code>sessionStore</code> which is created by
-calling the <code>createMemorySessionStore()</code> method which is also provided by the module. This function accepts <code>maxSessionAgeMS</code> as configuration
-which defines how old a session may be before its deleted.</p>
-
-            <h2 id="where-to-store-the-session-data-">
-              <a class="anchor" href="#where-to-store-the-session-data-">
-                Where to store the session data?
-              </a>
-            </h2>
-            <h2 id="configuring-the-session-cookie">
-              <a class="anchor" href="#configuring-the-session-cookie">
-                Configuring the session cookie
-              </a>
-            </h2>
 		</article>
 		<aside>
 		    <nav class="outline">
         <h3>Post Content</h3>
-        <a href="#what-are-nextjs-sessions-why-do-i-need-them-" class="l2">What are nextJS sessions, why do I need them?</a>
-<a href="#enabling-server-side-sessions-in-nextjs" class="l2">Enabling server side sessions in nextJS</a>
-<a href="#configuring-nextjs-sessions" class="l2">Configuring nextJS sessions</a>
-<a href="#access-the-session-in-nextjs-page-routes" class="l2">Access the session in nextJS page routes</a>
-<a href="#use-the-session-in-nextjs-api-routes" class="l2">Use the session in nextJS API routes</a>
-<a href="#setting-nextjs-session-data" class="l2">Setting nextJS session data</a>
-<a href="#destroying-a-nextjs-session" class="l2">Destroying a nextJS session</a>
-<a href="#where-to-store-the-session-data-" class="l2">Where to store the session data?</a>
-<a href="#configuring-the-session-cookie" class="l2">Configuring the session cookie</a>
+        
 </nav>
             <nav class="posts">
     <h3>Recent posts</h3>
     <nav class="postList">
     <a href="../mocking-modules-with-jest-and-typescript/"><span>2020-12-10 20:46:00</span> <span>Mocking modules with jest and typescript</span></a>
-<a href="../mocking-modules-with-jest-and-typescript/"><span>2020-12-10 20:46:00</span> <span>Mocking modules with jest and typescript</span></a>
 <a href="../the-new-old-school/"><span>2020-10-14 23:22:00</span> <span>The new old school</span></a>
 <a href="../updates-about-react-hook-router/"><span>2019-04-30 13:58:56</span> <span>Updates about react hook router</span></a>
 <a href="../modern-and-clean-routing-with-hooks/"><span>2019-03-21 12:17:37</span> <span>Modern and clean routing with hooks</span></a>
