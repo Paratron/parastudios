@@ -1,0 +1,7 @@
+{
+  "title": "Mocking modules with jest and typescript",
+  "slug": "mocking-modules-with-jest-and-typescript",
+  "publishTime": "2020-12-10 20:46:00",
+  "description": "Since it took me some time to understand the behaviour and the jest docs don't tell much about it, I wanted to write down how to mock\nmodules with jest and especially update the return values of module functions across your tests.",
+  "tags": ["jest", "mock", "typescript", "javascript", "webdev"]
+}
