@@ -14,6 +14,8 @@ test("It does something", () => {
 Now you notice that the function relies on calling the method `helper` from `moduleB`. You want to mock that function
 and simulate a return value:
 
+## Variant 1
+
 ```typescript
 import {someFunctionToTest} from "moduleA";
 import {helper} from "moduleB";
@@ -37,4 +39,51 @@ occures later, it will be executed before any imports are made. Therefore, `help
 
 Now we can update the return values of our mocked function by calling `mockedFunction.mockReturnValue()`. There is only one catch: typescript
 will complain that the imported `helper` has no function `mockReturnValue` to be called. Thats because typescript does not know that `helper`
-is not the real thing but a mocked function. We can get around it by casting the type locally to `jest.Mock`. 
+is not the real thing but a mocked function. We can get around it by casting the type locally to `jest.Mock`.
+
+## Variant 2
+After working some time with the variant 1, I came up with a variant 2 that may be more effective when you write lots of tests:
+
+```typescript
+import {someFunctionToTest} from "moduleA";
+import {helper as helperOriginal} from "moduleB";
+const helper = helperOriginal as jest.Mock;
+
+jest.mock("moduleB");
+
+test("It does something", () => {
+    helper.mockReturnValue(true);
+    expect(someFunctionToTest()).toEqual({something: true});
+});
+
+test("It does something else", () => {
+    helper.mockReturnValue(false);
+    expect(someFunctionToTest()).toEqual({something: false});
+});
+```
+
+This way, the `helper` method is not directly imported but imported as an alternatively named variable and then re-assigned and
+casted to type `jest.Mock`. 
+
+There is also a third variant (if your linter allows you to use `require()`):
+
+## Variant 3
+
+```typescript
+import {someFunctionToTest} from "moduleA";
+const { helper } = require("moduleB") as { helper: jest.Mock };
+
+jest.mock("moduleB");
+
+test("It does something", () => {
+    helper.mockReturnValue(true);
+    expect(someFunctionToTest()).toEqual({something: true});
+});
+
+test("It does something else", () => {
+    helper.mockReturnValue(false);
+    expect(someFunctionToTest()).toEqual({something: false});
+});
+```
+
+Pick whatever suits you the best. :)
