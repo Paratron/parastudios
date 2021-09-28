@@ -2,6 +2,7 @@ const fs = require('fs-extra');
 const utils = require('util');
 const marked = require('marked');
 const hljs = require("highlight.js");
+const yaml = require('js-yaml');
 
 const host = 'https://parastudios.de';
 const buildTargetDirectory = './docs';
@@ -98,7 +99,17 @@ readDir('./posts').then(async (folders) => {
 
     const posts = await folders.map(async (folder) => {
         const files = await readDir(`./posts/${folder}`) || [];
-        const post = Object.assign(
+
+        let meta = null;
+
+        try{
+            meta = require(`./posts/${folder}/meta`);
+        }
+        catch(e){
+            console.log("No meta.json found in ", folder, "looking for front matter...");
+        }
+
+        let post = Object.assign(
             {
                 title: folder,
                 slug: folder,
@@ -108,13 +119,23 @@ readDir('./posts').then(async (folders) => {
                 shareImage: undefined,
                 content: ''
             },
-            require(`./posts/${folder}/meta`)
+            meta
         );
 
         const hasMarkdownIndex = fileExists('index.md', files);
 
         if (hasMarkdownIndex) {
-            const markdownSource = await readFile(`./posts/${folder}/index.md`, 'utf8');
+            let markdownSource = await readFile(`./posts/${folder}/index.md`, 'utf8');
+            if(meta === null){
+                // Does front matter exist (meta in yaml)?
+                if(markdownSource.substr(0, 3) === "---"){
+                    const [,yamlCode,markdownSourceWithoutYaml] = markdownSource.split("---");
+                    console.log("Okay, front matter found 👍")
+                    meta = yaml.load(yamlCode);
+                    post = Object.assign(post, meta);
+                    markdownSource = markdownSourceWithoutYaml;
+                }
+            }
             post.content = marked(markdownSource);
 
             const lexedSource = marked.lexer(markdownSource);

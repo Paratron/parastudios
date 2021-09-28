@@ -19,8 +19,9 @@
   "devDependencies": {
     "fs-extra": "8.1.0",
     "highlight.js": "10.2.1",
-    "sass": "1.26.11",
-    "marked": "1.2.0"
+    "js-yaml": "4.1.0",
+    "marked": "1.2.0",
+    "sass": "1.26.11"
   },
   "dependencies": {
     "node-fetch": "2.6.1"
