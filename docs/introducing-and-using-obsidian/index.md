@@ -1,7 +1,7 @@
 ---
 title: Introducing and using Obsidian
 slug: introducing-and-using-obsidian
-publishTime: 2021-09-28 22:09:10
+publishTime: 2021-09-28 22:45:00
 description: I discovered a valuable note-taking app I want to share with you
 tags: ["knowledge", "organization", "notes", "app"]
 ---

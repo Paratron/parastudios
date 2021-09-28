@@ -6,13 +6,21 @@
     <description>A web related blog by Christian Engel</description>
     <language>en-en</language>
     <copyright>Christian Engel</copyright>
-    <pubDate>Tue, 28 Sep 2021 20:43:29 GMT</pubDate>
+    <pubDate>Tue, 28 Sep 2021 20:48:57 GMT</pubDate>
     <image>
       <url>https://parastudios.de/assets/web-love.svg</url>
       <title>web://❤ - Logo</title>
       <link>https://parastudios.de</link>
     </image>
 
+    <item>
+      <title>Introducing and using Obsidian</title>
+      <description>I discovered a valuable note-taking app I want to share with you</description>
+      <link>https://parastudios.de/introducing-and-using-obsidian</link>
+      <author>Christian Engel</author>
+      <guid>introducing-and-using-obsidian</guid>
+      <pubDate>Tue, 28 Sep 2021 22:45:00 GMT</pubDate>
+    </item>
     <item>
       <title>Mocking modules with jest and typescript</title>
       <description>Since it took me some time to understand the behaviour and the jest docs don't tell much about it, I wanted to write down how to mock
@@ -54,14 +62,6 @@ very flexible and powerful.</description>
       <author>Christian Engel</author>
       <guid>create-a-react-component-as-npm-module</guid>
       <pubDate>Wed, 06 Mar 2019 14:42:31 GMT</pubDate>
-    </item>
-    <item>
-      <title>Introducing and using Obsidian</title>
-      <description>I discovered a valuable note-taking app I want to share with you</description>
-      <link>https://parastudios.de/introducing-and-using-obsidian</link>
-      <author>Christian Engel</author>
-      <guid>introducing-and-using-obsidian</guid>
-      <pubDate>Tue, 28 Sep 2021 22:09:10 GMT</pubDate>
     </item>
   </channel>
 </rss>
