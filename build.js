@@ -72,13 +72,13 @@ const buildPostOutlineFromLexedMarkdown = (lex) => {
 const getShareImageFromPost = (lex, slug) => {
     const url = require("url");
 
-    for(let i = 0; i < lex.length; i++){
+    for (let i = 0; i < lex.length; i++) {
         const elm = lex[i];
-        if(elm.type === "paragraph"){
-            if(elm.tokens && elm.tokens.length){
+        if (elm.type === "paragraph") {
+            if (elm.tokens && elm.tokens.length) {
                 const t = elm.tokens[0];
 
-                if(t.type === "image"){
+                if (t.type === "image") {
                     return url.resolve(`${slug}/`, t.href);
                 }
             }
@@ -86,7 +86,7 @@ const getShareImageFromPost = (lex, slug) => {
     }
 
     return undefined;
-}
+};
 
 fs.ensureDir(`${buildTargetDirectory}/assets`);
 readDir('./assets')
@@ -102,10 +102,9 @@ readDir('./posts').then(async (folders) => {
 
         let meta = null;
 
-        try{
+        try {
             meta = require(`./posts/${folder}/meta`);
-        }
-        catch(e){
+        } catch (e) {
             console.log("No meta.json found in ", folder, "looking for front matter...");
         }
 
@@ -126,11 +125,11 @@ readDir('./posts').then(async (folders) => {
 
         if (hasMarkdownIndex) {
             let markdownSource = await readFile(`./posts/${folder}/index.md`, 'utf8');
-            if(meta === null){
+            if (meta === null) {
                 // Does front matter exist (meta in yaml)?
-                if(markdownSource.substr(0, 3) === "---"){
-                    const [,yamlCode,markdownSourceWithoutYaml] = markdownSource.split("---");
-                    console.log("Okay, front matter found 👍")
+                if (markdownSource.substr(0, 3) === "---") {
+                    const [, yamlCode, markdownSourceWithoutYaml] = markdownSource.split("---");
+                    console.log("Okay, front matter found 👍");
                     meta = yaml.load(yamlCode);
                     post = Object.assign(post, meta);
                     markdownSource = markdownSourceWithoutYaml;
@@ -150,7 +149,7 @@ readDir('./posts').then(async (folders) => {
 
     Promise.all(posts).then(async (posts) => {
         posts.sort((a, b) =>
-            a.publishTime > b.publishTime
+            (new Date(a.publishTime)).getTime() > (new Date(b.publishTime)).getTime()
                 ? -1
                 : 1
         );
