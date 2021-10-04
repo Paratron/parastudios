@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link href="../assets/favicon.svg" rel="shortcut icon">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>The Redirect Response pattern - web://❤</title>
+        <meta name="description" content="Using HTTP callbacks with your API gives interesting possibilities to reduce client side javascript." />
+        <link type="text/css" rel="stylesheet" href="../assets/style.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="/posts.rss" />
+        <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="@paratron">
+    <meta name="twitter:title" content="The Redirect Response pattern">
+    <meta name="twitter:description" content="Using HTTP callbacks with your API gives interesting possibilities to reduce client side javascript.">
+    <meta name="twitter:image" content="https://parastudios.de/redirect-response-pattern/pattern.svg">
+        <script async defer data-domain="parastudios.de" src="https://plausible.io/js/plausible.js"></script>
+    </head>
+    <body>
+		<header>
+			<a class="blog-title" href="/" title="web://❤"><img src="../assets/web-love-bright.svg" alt="web://❤" /></a>
+            <small>A web related blog by Christian Engel</small>
+		</header>
+		<article>
+			
+            <h1 id="the-redirect-response-pattern">
+              <a class="anchor" href="#the-redirect-response-pattern">
+                The Redirect Response pattern
+              </a>
+            </h1><p><img src="pattern.svg" alt="Traditional API call vs. redirect response"></p>
+<p>Chances are high that you&#39;ve worked with an HTTP-based API before. You make a request against the API - be it via GET, POST or something else and you get a pure data response. Mostly JSON or maybe XML.</p>
+<p>I guess the majority of web developers have interacted with such APIs in the past - maybe even implemented one themselves.</p>
+<p>I created a pattern where the API (optionally) does not respond with data directly, but with HTTP redirect &quot;callbacks&quot;. I found this pattern useful when working with static websites that still need a contact form so I want to present the pattern here.</p>
+
+            <h3 id="http-callbacks-">
+              <a class="anchor" href="#http-callbacks-">
+                HTTP callbacks?
+              </a>
+            </h3><p>The concept of callback functions is very common in asynchronous Javascript calls. Functions get passed as arguments to other functions and they will be called whenever the result (or an error) is available.</p>
+<p>I applied this concept to my API calls. Lets have an example:</p>
+<p>Say, I have an API endpoint that takes a message and an email address of a contact form and processes it.</p>
+<p><code>https://example.com/contact</code></p>
+<p>Most APIs would take the request, process it and return data and a status code that indicates if the request was successful or has failed. This could be a HTTP 200 and a message like &quot;ok&quot;. Or maybe a HTTP 400 with the message &quot;invalid mail&quot;.</p>
+<p>Now, when the contact form should be processed, the submit event could be intercepted, the request sent via AJAX and the response interpreted in Javascript. By using the Redirect Response pattern, some Javascript boilerplate can be cut out here. Lets apply the pattern.</p>
+
+            <h3 id="the-pattern">
+              <a class="anchor" href="#the-pattern">
+                The pattern
+              </a>
+            </h3><p>We tell the API that after processing the request, it should redirect the browser to a different URL:</p>
+<p><code>https://example.com/contact?onSuccess=/thankYou.html&amp;onError=/contact.html</code></p>
+<p>I put exactly this URL into the <code>action</code> attribute of my contact form:</p>
+<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">method</span>=<span class="hljs-string">&quot;post&quot;</span> <span class="hljs-attr">action</span>=<span class="hljs-string">&quot;https://example.com/contact?onSuccess=/thankYou.html&amp;onError=/contactError.html&quot;</span>&gt;</span>
+....
+<span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span></code></pre>
+<p>I defined two &quot;HTTP callbacks&quot;, here: <code>onSuccess</code> should be called, when everything went fine. The <code>onError</code> callback is being called when the processing fails.</p>
+<p>Instead of returning data, the API returns a <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/303~~~~">HTTP 303 statuscode</a> and redirects to the provided URL.</p>
+<p>This way, no javascript is needed to process the contact form. The validation can be done through <a href="https://developer.mozilla.org/en-US/docs/Learn/Forms/Form_validation#using_built-in_form_validation">HTML5 form validation</a>. If everything seems valid, the form data is being sent to the API (the browser tries to navigate to the API endpoint), processed and then, the API issues a redirect. Either to the thank-you-page, or the error-page. Look ma, no Javascript! Just plain HTML files.</p>
+
+            <h3 id="passing-and-processing-result-data">
+              <a class="anchor" href="#passing-and-processing-result-data">
+                Passing and processing result data
+              </a>
+            </h3><p>Sometimes, just sending the user along to other pages is not enough. You may want to react somehow to the response data from the API. Maybe just providing a general error page when lots of small errors could happen is considered bad UX. I hear you.</p>
+<p>In cases like this, I extend the pattern a bit. The server redirects and appends additional data in a query string. So instead of redirecting to <code>contactError.html</code>, it can redirect like this: <code>contactError.html?error=invalidMail</code>.</p>
+<p>This way, the error page can access details about what went wrong and provide additional information.</p>
+<p>With lots of response data, the solution gets hairy, tough. When you serialize big objects, the URLs get pretty long, quickly. Also be careful with sensible data - it might end up in your server logs and will be plainly visible in the users URL bar. On the other hand, it might be easy to fetch how often error pages are called and what error happened directly from your plain server logs. No Analytics software needed.</p>
+
+            <h3 id="conclusion">
+              <a class="anchor" href="#conclusion">
+                Conclusion
+              </a>
+            </h3><p>Additional layers and features can be implemented here to create variations of the basic pattern:</p>
+<ul>
+<li>You may want to check if the referrer is allowed calling the API</li>
+<li>The query parameters <code>onSuccess</code> and <code>onError</code> are just an example. Other names work, too.</li>
+<li>Maybe the <code>onError</code> can be optional and the API redirects to the other endpoint in any case, when <code>onError</code> is omitted.</li>
+<li>The <code>onSuccess</code> redirect could receive result data, too</li>
+<li>Data could only be passed along when the parameter is named <code>onErrorWithData</code> - otherwise its assumed the refirected page does not need the data</li>
+<li>The API could respond with plain data as usual if all <code>onXXX</code> parameters are omitted.</li>
+</ul>
+<p>I hope I was able to give an idea of how the pattern works and what benefits and drawbacks emerge from using it.</p>
+
+		</article>
+		<aside>
+		    <nav class="outline">
+        <h3>Post Content</h3>
+        <a href="#http-callbacks-" class="l3">HTTP callbacks?</a>
+<a href="#the-pattern" class="l3">The pattern</a>
+<a href="#passing-and-processing-result-data" class="l3">Passing and processing result data</a>
+<a href="#conclusion" class="l3">Conclusion</a>
+</nav>
+            <nav class="posts">
+    <h3>Recent posts</h3>
+    <nav class="postList">
+    <a href="../redirect-response-pattern/"><span>2021-10-04 13:33:00</span> <span>The Redirect Response pattern</span></a>
+<a href="../introducing-and-using-obsidian/"><span>2021-09-28 22:09:10</span> <span>Introducing and using Obsidian</span></a>
+<a href="../mocking-modules-with-jest-and-typescript/"><span>2020-12-10 20:46:00</span> <span>Mocking modules with jest and typescript</span></a>
+<a href="../the-new-old-school/"><span>2020-10-14 23:22:00</span> <span>The new old school</span></a>
+<a href="../updates-about-react-hook-router/"><span>2019-04-30 13:58:56</span> <span>Updates about react hook router</span></a>
+<a href="../modern-and-clean-routing-with-hooks/"><span>2019-03-21 12:17:37</span> <span>Modern and clean routing with hooks</span></a>
+<a href="../create-a-react-component-as-npm-module/"><span>2019-03-06 15:42:31</span> <span>Create a react component as npm module</span></a>
+    </nav>
+</nav>	
+        </aside>
+		<nav class="marginal">
+            <a href="https://twitter.com/paratron">Follow me on Twitter</a>
+            <a href="https://github.com/Paratron">Follow me on Github</a>
+            <a href="/posts.rss">Blog RSS</a>
+        </nav>
+        <button class="darkModeButton" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        <script>
+            function toggleDarkMode(){
+                document.querySelector("html").toggleAttribute("data-dark");
+                localStorage.setItem("dark", document.querySelector("html").getAttribute("data-dark"));
+            }
+            if(localStorage.getItem("dark") !== null){
+                toggleDarkMode();
+            }
+        </script>
+    </body>
+</html>
