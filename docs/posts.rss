@@ -6,13 +6,21 @@
     <description>A web related blog by Christian Engel</description>
     <language>en-en</language>
     <copyright>Christian Engel</copyright>
-    <pubDate>Tue, 28 Sep 2021 20:53:10 GMT</pubDate>
+    <pubDate>Mon, 04 Oct 2021 08:32:35 GMT</pubDate>
     <image>
       <url>https://parastudios.de/assets/web-love.svg</url>
       <title>web://❤ - Logo</title>
       <link>https://parastudios.de</link>
     </image>
 
+    <item>
+      <title>The Redirect Response pattern</title>
+      <description>Using HTTP callbacks with your API gives interesting possibilities to reduce client side javascript.</description>
+      <link>https://parastudios.de/redirect-response-pattern</link>
+      <author>Christian Engel</author>
+      <guid>redirect-response-pattern</guid>
+      <pubDate>Mon, 04 Oct 2021 11:33:00 GMT</pubDate>
+    </item>
     <item>
       <title>Introducing and using Obsidian</title>
       <description>I discovered a valuable note-taking app I want to share with you</description>
