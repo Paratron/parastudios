@@ -1,7 +1,7 @@
 ---
 title: The Redirect Response pattern
 slug: redirect-response-pattern
-publishTime: "2021-10-04 13:33:00"
+publishTime: "2021-10-04 10:33:00"
 description: Using HTTP callbacks with your API gives interesting possibilities to reduce client side javascript.
 tags: ["frontend", "api", "pattern", "architecture", "http", "static-sites"]
 ---
