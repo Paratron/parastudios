@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link href="../assets/favicon.svg" rel="shortcut icon">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>Access denied for 'root'@'localhost' - web://❤</title>
+        <meta name="description" content="MySQL won't let me authenticate as root user through an SSH tunnel in dbeaver." />
+        <link type="text/css" rel="stylesheet" href="../assets/style.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="/posts.rss" />
+        <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="@paratron">
+    <meta name="twitter:title" content="Access denied for 'root'@'localhost'">
+    <meta name="twitter:description" content="MySQL won't let me authenticate as root user through an SSH tunnel in dbeaver.">
+    <meta name="twitter:image" content="https://parastudios.de/assets/social.jpg">
+        <script async defer data-domain="parastudios.de" src="https://plausible.io/js/plausible.js"></script>
+    </head>
+    <body>
+		<header>
+			<a class="blog-title" href="/" title="web://❤"><img src="../assets/web-love-bright.svg" alt="web://❤" /></a>
+            <small>A web related blog by Christian Engel</small>
+		</header>
+		<article>
+			
+            <h1 id="access-denied-for-39-root-39-39-localhost-39-">
+              <a class="anchor" href="#access-denied-for-39-root-39-39-localhost-39-">
+                Access denied for &#39;root&#39;@&#39;localhost&#39;
+              </a>
+            </h1><p>I had the case where I tried to connect to a remote MySQL server through an SSH tunnel with <a href="https://dbeaver.io/">dbeaver</a>.</p>
+<p>The tunnel itself worked fine - I was able to create a connection but the server refused connecting and identifying as root user to the database. This happened on an old DigitalOcean Droplet with MySQL 5 installed where I was running a bunch of legacy websites.</p>
+<p>I pulled my hair and tried a couple of approaches around the <code>localhost</code> part - because MySQL can be restrictive here - <code>localhost != 127.0.0.1</code>. But it never worked out.</p>
+<p>When I created an SSH connection to the server, running the command <code>mysql -uroot</code> worked just fine - I was connected as root user immediately. It didn&#39;t even ask for a password. I assumed the authentication happened through an SSH key but I was wrong. The following command shined some light on the issue:</p>
+<pre><code class="language-sql"><span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">user</span>, authentication_string, <span class="hljs-keyword">plugin</span>, host <span class="hljs-keyword">FROM</span> mysql.user;</code></pre>
+<p>It spits out a list of existing users of your MySQL server, what plugin the user uses for authentication and what hosts are allowed to connect.</p>
+<p>```bash
++</p>
+
+		</article>
+		<aside>
+		    <nav class="outline">
+        <h3>Post Content</h3>
+        
+</nav>
+            <nav class="posts">
+    <h3>Recent posts</h3>
+    <nav class="postList">
+    <a href="../access-denied-for-root-at-localhost/"><span>2021-12-09 18:00:00</span> <span>Access denied for 'root'@'localhost'</span></a>
+<a href="../media-query-organization-in-sass/"><span>2021-11-19 12:55:10</span> <span>Media Query organization in SASS</span></a>
+<a href="../redirect-response-pattern/"><span>2021-10-04 10:33:00</span> <span>The Redirect Response pattern</span></a>
+<a href="../introducing-and-using-obsidian/"><span>2021-09-28 22:09:10</span> <span>Introducing and using Obsidian</span></a>
+<a href="../mocking-modules-with-jest-and-typescript/"><span>2020-12-10 20:46:00</span> <span>Mocking modules with jest and typescript</span></a>
+<a href="../the-new-old-school/"><span>2020-10-14 23:22:00</span> <span>The new old school</span></a>
+<a href="../updates-about-react-hook-router/"><span>2019-04-30 13:58:56</span> <span>Updates about react hook router</span></a>
+<a href="../modern-and-clean-routing-with-hooks/"><span>2019-03-21 12:17:37</span> <span>Modern and clean routing with hooks</span></a>
+<a href="../create-a-react-component-as-npm-module/"><span>2019-03-06 15:42:31</span> <span>Create a react component as npm module</span></a>
+    </nav>
+</nav>	
+        </aside>
+		<nav class="marginal">
+            <a href="https://twitter.com/paratron">Follow me on Twitter</a>
+            <a href="https://github.com/Paratron">Follow me on Github</a>
+            <a href="/posts.rss">Blog RSS</a>
+        </nav>
+        <button class="darkModeButton" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        <script>
+            function toggleDarkMode(){
+                document.querySelector("html").toggleAttribute("data-dark");
+                localStorage.setItem("dark", document.querySelector("html").getAttribute("data-dark"));
+            }
+            if(localStorage.getItem("dark") !== null){
+                toggleDarkMode();
+            }
+        </script>
+    </body>
+</html>

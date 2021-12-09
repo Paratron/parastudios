@@ -6,13 +6,21 @@
     <description>A web related blog by Christian Engel</description>
     <language>en-en</language>
     <copyright>Christian Engel</copyright>
-    <pubDate>Fri, 19 Nov 2021 11:52:59 GMT</pubDate>
+    <pubDate>Thu, 09 Dec 2021 16:59:12 GMT</pubDate>
     <image>
       <url>https://parastudios.de/assets/web-love.svg</url>
       <title>web://❤ - Logo</title>
       <link>https://parastudios.de</link>
     </image>
 
+    <item>
+      <title>Access denied for 'root'@'localhost'</title>
+      <description>MySQL won't let me authenticate as root user through an SSH tunnel in dbeaver.</description>
+      <link>https://parastudios.de/access-denied-for-root-at-localhost</link>
+      <author>Christian Engel</author>
+      <guid>access-denied-for-root-at-localhost</guid>
+      <pubDate>Thu, 09 Dec 2021 17:00:00 GMT</pubDate>
+    </item>
     <item>
       <title>Media Query organization in SASS</title>
       <description>SASS makes working with media queries / breakpoints easy, if you apply this pattern</description>
