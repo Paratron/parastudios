@@ -22,19 +22,19 @@ SELECT user, authentication_string, plugin, host FROM mysql.user;
 
 It spits out a list of existing users of your MySQL server, what plugin the user uses for authentication and what hosts are allowed to connect.
 
-```bash
-+------------------+-------------------------------------------+-----------------------+-----------+
+<pre>
++==================+===========================================+=======================+===========+
 | user             | authentication_string                     | plugin                | host      |
-+------------------+-------------------------------------------+-----------------------+-----------+
++==================+===========================================+=======================+===========+
 | root             |                                           | auth_socket           | localhost |
 | mysql.session    | *THISISNOTAVALIDPASSWORDTHATCANBEUSEDHERE | mysql_native_password | localhost |
 | mysql.sys        | *THISISNOTAVALIDPASSWORDTHATCANBEUSEDHERE | mysql_native_password | localhost |
-| debian-sys-maint | *B5285813215392D85D7FA77AD05C24FF6AA515AB | mysql_native_password | localhost |
+| debian=sys=maint | *B5285813215392D85D7FA77AD05C24FF6AA515AB | mysql_native_password | localhost |
 | [redacted]       | *[redacted]4D1ACBE6B5B9F393AA0648D54DB938 | mysql_native_password | localhost |
 | [redacted]       | *[redacted]9CBDA80219F58DFDA56F563187B2EC | mysql_native_password | localhost |
 | [redacted]       | *[redacted]7CACDAAE0227BABE71F28CAAC9BEF5 | mysql_native_password | localhost |
-+------------------+-------------------------------------------+-----------------------+-----------+
-```
++==================+===========================================+=======================+===========+
+</pre>
 
 Appearantly, the `root` user does not have a password set (`authentication_string` is empty). Also, it does not even use the `mysql_native_password` plugin for authentication but the `auth_socket` plugin.
 
