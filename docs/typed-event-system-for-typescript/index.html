@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link href="../assets/favicon.svg" rel="shortcut icon">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>A typed event system for Typescript - web://❤</title>
+        <meta name="description" content="I wrote a simple, typed event emitter/subscriber system on the weekend." />
+        <link type="text/css" rel="stylesheet" href="../assets/style.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="/posts.rss" />
+        <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="@paratron">
+    <meta name="twitter:title" content="A typed event system for Typescript">
+    <meta name="twitter:description" content="I wrote a simple, typed event emitter/subscriber system on the weekend.">
+    <meta name="twitter:image" content="https://parastudios.de/assets/social.jpg">
+        <script async defer data-domain="parastudios.de" src="https://plausible.io/js/plausible.js"></script>
+    </head>
+    <body>
+		<header>
+			<a class="blog-title" href="/" title="web://❤"><img src="../assets/web-love-bright.svg" alt="web://❤" /></a>
+            <small>A web related blog by Christian Engel</small>
+		</header>
+		<article>
+			
+            <h1 id="a-typed-event-system-for-typescript">
+              <a class="anchor" href="#a-typed-event-system-for-typescript">
+                A typed event system for Typescript
+              </a>
+            </h1><p>I am working on a <a href="https://robostreamer.com">pet project</a> with distributed services right now.</p>
+<p>During the development, I was in need of a classic on/off style event system which is usually quickly written with 
+a couple lines of code. This time however, I wondered if it would be possible to have the whole event system type guarded
+with Typescript types.</p>
+
+            <h2 id="get-the-code">
+              <a class="anchor" href="#get-the-code">
+                Get the code
+              </a>
+            </h2><p>I stored the whole 58 lines of code in <a href="https://gist.github.com/Paratron/faacf00bc9a06d8adce1220c6a65f041">a github gist</a>. Please be aware that I don&#39;t take any responsibility if the code
+does not work as intented or causes failures somewhere. Use it at your own risk.</p>
+
+            <h2 id="how-to-use-it">
+              <a class="anchor" href="#how-to-use-it">
+                How to use it
+              </a>
+            </h2><p>If you have ever worked with a on/off style event emitter, the usage of this system will be straight forward. I am still going
+to explain it shortly.</p>
+
+            <h3 id="how-a-basic-on-off-style-event-system-works">
+              <a class="anchor" href="#how-a-basic-on-off-style-event-system-works">
+                How a basic on/off style event system works
+              </a>
+            </h3><p>You may skip to the next headline, if you know about this already :)</p>
+<p>For an event system, you usually have points in your code which trigger events and broadcast the occurance of the events without
+knowing if someone actually listens for them.</p>
+<p>Other parts of your code may subscribe to the existing events and react on them. If you ever worked with events in the DOM of a website,
+its exactly this pattern:</p>
+<pre><code class="language-javascript"><span class="hljs-comment">// Adding a callback function to &quot;change&quot; events on a text box.</span>
+<span class="hljs-comment">// The callback is called every time when a change event happens.</span>
+<span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&quot;myCoolTextbox&quot;</span>).addEventListener(<span class="hljs-string">&quot;change&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">event</span>)</span>{
+    <span class="hljs-comment">// ...</span>
+});</code></pre>
+<p>So there may be infinite subscribers (listeners) to some event and whenever it gets triggered, all subscribers will be notified. </p>
+
+            <h3 id="prepare-the-types-of-your-events">
+              <a class="anchor" href="#prepare-the-types-of-your-events">
+                Prepare the types of your events
+              </a>
+            </h3><p>I designed the event system so you can create a typescript <code>interface</code> to define all your existing events as well as their data payloads.</p>
+<p>If we for example want to create a fictional video player app with an event system, we could define the following events:</p>
+<pre><code class="language-typescript"><span class="hljs-keyword">interface</span> AppEvents {
+    load: {
+      filename: <span class="hljs-built_in">string</span>;
+      format: <span class="hljs-built_in">string</span>;
+      totalTimeMs: <span class="hljs-built_in">number</span>;
+    },
+    update: {
+        currentTimeMs: <span class="hljs-built_in">number</span>;
+    },
+    play: <span class="hljs-built_in">void</span>,
+    pause: <span class="hljs-built_in">void</span>,
+    stop: <span class="hljs-built_in">void</span>
+}</code></pre>
+<p>So we have a <code>load</code> event when the user opens a file, an <code>update</code> event which fires continuously while playing back the file
+and <code>play</code>, <code>pause</code> and <code>stop</code> events that are triggered upon user interaction.</p>
+
+            <h3 id="creating-and-using-the-event-system">
+              <a class="anchor" href="#creating-and-using-the-event-system">
+                Creating and using the event system
+              </a>
+            </h3><p>With our typescript interface at hand defining all events in our system, we can actually create the system in code:</p>
+<pre><code class="language-typescript"><span class="hljs-comment">// appEvents.ts</span>
+<span class="hljs-keyword">import</span> createEventSystem <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./eventSystem.ts&quot;</span>;
+
+<span class="hljs-keyword">interface</span> AppEvents {
+    load: {
+        filename: <span class="hljs-built_in">string</span>;
+        format: <span class="hljs-built_in">string</span>;
+        totalTimeMs: <span class="hljs-built_in">number</span>;
+    },
+    update: {
+        currentTimeMs: <span class="hljs-built_in">number</span>;
+    },
+    play: <span class="hljs-built_in">void</span>,
+    pause: <span class="hljs-built_in">void</span>,
+    stop: <span class="hljs-built_in">void</span>
+}
+
+<span class="hljs-keyword">const</span> eventSystem = createEventSystem&lt;AppEvents&gt;();
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> eventSystem;</code></pre>
+<p>Now the system can be used from anywhere in our code. Typescript takes care that only known events can be triggered
+and they need to receive exactly the expected payloads.</p>
+<pre><code class="language-typescript"><span class="hljs-keyword">import</span> appEvents <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./appEvents.ts&quot;</span>;
+<span class="hljs-keyword">import</span> { loadAndParseAudioFile } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./audioLoader.ts&quot;</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">loadFile</span>(<span class="hljs-params">filename</span>)</span>{
+    <span class="hljs-keyword">const</span> {
+        filename,
+        format,
+        totalTimeMs
+    } = <span class="hljs-keyword">await</span> loadAndParseAudioFile(filename);
+
+    appEvents.trigger(<span class="hljs-string">&quot;load&quot;</span>, {filename, format, totalTimeMs});
+}</code></pre>
+<p>On some other part of your application, your code may subscribe to the defined events:</p>
+<pre><code class="language-typescript"><span class="hljs-comment">// logger.ts</span>
+<span class="hljs-keyword">import</span> appEvents <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./appEvents.ts&quot;</span>;
+
+appEvents.on(<span class="hljs-string">&quot;load&quot;</span>, <span class="hljs-function">(<span class="hljs-params">payload</span>) =&gt;</span> {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`You opened the file <span class="hljs-subst">${payload.filename}</span> with a length of <span class="hljs-subst">${payload.totalTimeMs}</span> milliseconds.`</span>);
+});</code></pre>
+
+            <h3 id="stop-listening-to-an-event">
+              <a class="anchor" href="#stop-listening-to-an-event">
+                Stop listening to an event
+              </a>
+            </h3><p>To detach from receiving events, one needs to call the <code>.off()</code> method and pass the exactly same callback function to the
+off handler:</p>
+<pre><code class="language-typescript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">handler</span>(<span class="hljs-params">data</span>)</span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;An update happened!&quot;</span>, data);
+}
+
+eventSystem.on(<span class="hljs-string">&quot;update&quot;</span>, handler);
+
+<span class="hljs-comment">// And somewhere else:</span>
+eventSystem.off(<span class="hljs-string">&quot;update&quot;</span>, handler);</code></pre>
+<p>Please be aware that it needs to be the <em>same</em> callback function and not another one, with similar code.</p>
+
+            <h3 id="this-wont-work-">
+              <a class="anchor" href="#this-wont-work-">
+                THIS WONT WORK!
+              </a>
+            </h3><pre><code class="language-typescript">eventSystem.on(<span class="hljs-string">&quot;update&quot;</span>, <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;An update happened!&quot;</span>, data);
+});
+
+eventSystem.off(<span class="hljs-string">&quot;update&quot;</span>, <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;An update happened!&quot;</span>, data);
+});
+
+<span class="hljs-comment">// These are TWO separate functions, therefore the &quot;off&quot; call did not work.</span></code></pre>
+
+            <h2 id="using-enums-as-event-names">
+              <a class="anchor" href="#using-enums-as-event-names">
+                Using ENUMs as event names
+              </a>
+            </h2><p>Since typescript interfaces do not care about the format of field names, you are free to define an ENUM to keep your
+existing event names for better discoverability in your IDE:</p>
+<pre><code class="language-typescript"><span class="hljs-keyword">export</span> <span class="hljs-built_in">enum</span> EventNames {
+    LOAD,
+    UPDATE,
+    PLAY,
+    PAUSE,
+    STOP
+};
+
+<span class="hljs-keyword">interface</span> AppEvents {
+    [EventNames.LOAD]: {
+        filename: <span class="hljs-built_in">string</span>;
+        format: <span class="hljs-built_in">string</span>;
+        totalTimeMs: <span class="hljs-built_in">number</span>;
+    },
+    [EventNames.UPDATE]: {
+        currentTimeMs: <span class="hljs-built_in">number</span>;
+    },
+    [EventNames.PLAY]: <span class="hljs-built_in">void</span>,
+    [EventNames.PAUSE]: <span class="hljs-built_in">void</span>,
+    [EventNames.STOP]: <span class="hljs-built_in">void</span>
+}</code></pre>
+<p>This way, you can call your triggers and subscriptions like this:</p>
+<pre><code class="language-typescript">eventSystem.trigger(EventNames.PLAY);
+
+eventSystem.on(EventNames.UPDATE, <span class="hljs-function">(<span class="hljs-params">{currentTime}</span>) =&gt;</span> {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`Current time: <span class="hljs-subst">${currentTime}</span>`</span>);
+});</code></pre>
+
+		</article>
+		<aside>
+		    <nav class="outline">
+        <h3>Post Content</h3>
+        <a href="#get-the-code" class="l2">Get the code</a>
+<a href="#how-to-use-it" class="l2">How to use it</a>
+<a href="#how-a-basic-on-off-style-event-system-works" class="l3">How a basic on/off style event system works</a>
+<a href="#prepare-the-types-of-your-events" class="l3">Prepare the types of your events</a>
+<a href="#creating-and-using-the-event-system" class="l3">Creating and using the event system</a>
+<a href="#stop-listening-to-an-event" class="l3">Stop listening to an event</a>
+<a href="#this-wont-work-" class="l3">THIS WONT WORK!</a>
+<a href="#using-enums-as-event-names" class="l2">Using ENUMs as event names</a>
+</nav>
+            <nav class="posts">
+    <h3>Recent posts</h3>
+    <nav class="postList">
+    <a href="../typed-event-system-for-typescript/"><span>2022-04-19 15:25:00</span> <span>A typed event system for Typescript</span></a>
+<a href="../access-denied-for-root-at-localhost/"><span>2021-12-09 18:00:00</span> <span>Access denied for 'root'@'localhost'</span></a>
+<a href="../media-query-organization-in-sass/"><span>2021-11-19 12:55:10</span> <span>Media Query organization in SASS</span></a>
+<a href="../redirect-response-pattern/"><span>2021-10-04 10:33:00</span> <span>The Redirect Response pattern</span></a>
+<a href="../introducing-and-using-obsidian/"><span>2021-09-28 22:09:10</span> <span>Introducing and using Obsidian</span></a>
+<a href="../mocking-modules-with-jest-and-typescript/"><span>2020-12-10 20:46:00</span> <span>Mocking modules with jest and typescript</span></a>
+<a href="../the-new-old-school/"><span>2020-10-14 23:22:00</span> <span>The new old school</span></a>
+<a href="../updates-about-react-hook-router/"><span>2019-04-30 13:58:56</span> <span>Updates about react hook router</span></a>
+<a href="../modern-and-clean-routing-with-hooks/"><span>2019-03-21 12:17:37</span> <span>Modern and clean routing with hooks</span></a>
+<a href="../create-a-react-component-as-npm-module/"><span>2019-03-06 15:42:31</span> <span>Create a react component as npm module</span></a>
+    </nav>
+</nav>	
+        </aside>
+		<nav class="marginal">
+            <a href="https://twitter.com/paratron">Follow me on Twitter</a>
+            <a href="https://github.com/Paratron">Follow me on Github</a>
+            <a href="/posts.rss">Blog RSS</a>
+        </nav>
+        <button class="darkModeButton" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        <script>
+            function toggleDarkMode(){
+                document.querySelector("html").toggleAttribute("data-dark");
+                localStorage.setItem("dark", document.querySelector("html").getAttribute("data-dark"));
+            }
+            if(localStorage.getItem("dark") !== null){
+                toggleDarkMode();
+            }
+        </script>
+    </body>
+</html>
