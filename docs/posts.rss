@@ -6,13 +6,21 @@
     <description>A web related blog by Christian Engel</description>
     <language>en-en</language>
     <copyright>Christian Engel</copyright>
-    <pubDate>Thu, 09 Dec 2021 17:08:48 GMT</pubDate>
+    <pubDate>Tue, 19 Apr 2022 13:25:19 GMT</pubDate>
     <image>
       <url>https://parastudios.de/assets/web-love.svg</url>
       <title>web://❤ - Logo</title>
       <link>https://parastudios.de</link>
     </image>
 
+    <item>
+      <title>A typed event system for Typescript</title>
+      <description>I wrote a simple, typed event emitter/subscriber system on the weekend.</description>
+      <link>https://parastudios.de/typed-event-system-for-typescript</link>
+      <author>Christian Engel</author>
+      <guid>typed-event-system-for-typescript</guid>
+      <pubDate>Tue, 19 Apr 2022 13:25:00 GMT</pubDate>
+    </item>
     <item>
       <title>Access denied for 'root'@'localhost'</title>
       <description>MySQL won't let me authenticate as root user through an SSH tunnel in dbeaver.</description>
