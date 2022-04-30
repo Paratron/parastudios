@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link href="../assets/favicon.svg" rel="shortcut icon">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>Strapi quirks you should know about - web://❤</title>
+        <meta name="description" content="When I first came across Strapi, I had some misconceptions about it which are not immediately clear when reading about the framework in their docs." />
+        <link type="text/css" rel="stylesheet" href="../assets/style.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="/posts.rss" />
+        <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="@paratron">
+    <meta name="twitter:title" content="Strapi quirks you should know about">
+    <meta name="twitter:description" content="When I first came across Strapi, I had some misconceptions about it which are not immediately clear when reading about the framework in their docs.">
+    <meta name="twitter:image" content="https://parastudios.de/strapi-quirks-you-should-know-about/pexels-alexander-dummer-132700.jpg">
+        <script async defer data-domain="parastudios.de" src="https://plausible.io/js/plausible.js"></script>
+    </head>
+    <body>
+		<header>
+			<a class="blog-title" href="/" title="web://❤"><img src="../assets/web-love-bright.svg" alt="web://❤" /></a>
+            <small>A web related blog by Christian Engel</small>
+		</header>
+		<article>
+			
+            <h1 id="strapi-quirks-you-should-know-about">
+              <a class="anchor" href="#strapi-quirks-you-should-know-about">
+                Strapi quirks you should know about
+              </a>
+            </h1><p><img src="./pexels-alexander-dummer-132700.jpg" alt="Oscilloscope test station"></p>
+<p>When I first came across Strapi, I had some misconceptions about it which are not immediately clear when reading about the framework in their docs.</p>
+<p>I learned about some concepts and approaches only when actively using Strapi and wished to have known them before.</p>
+<p>This is not a rant but just a heads up for other devs who consider building a project with strapi. I hope I can save them some hours of looking around in the docs and pulling out some hair. If it sounds ranty in some places, its because I experienced lots of frustration sometimes, so bear with me.</p>
+<p>Here we go:</p>
+
+            <h2 id="the-admin-ui-skips-all-business-logic-implemented-into-the-api">
+              <a class="anchor" href="#the-admin-ui-skips-all-business-logic-implemented-into-the-api">
+                The admin UI skips all business logic implemented into the API
+              </a>
+            </h2><p>This assumption threw me off the most because it leads to a chain of conclusions of what should be possible.</p>
+<p><strong>For me, Strapi looked like a framework that lets you define a CRUD API, handles user authentication and offers an admin UI to interact with that API without having to build a dedicated UI first.</strong></p>
+<p>Thats only halfway true. Yes, Strapi allows to define a data model and creates API endpoints for that model. It also allows to pour business logic into the mix by offering the ability to create new or modify existing endpoints (routes), controllers, services and more.</p>
+<p>You begin to scratch your head when all of those modifications are completely ignored by the admin UI. The reason is: Strapi creates <em>two</em> APIs. One I call the &quot;frontend API&quot; which is being consumed by your application and one &quot;admin API&quot; which is used exclusively by the admin UI.</p>
+<p>There should be a big, red warning right on the getting started page: __&quot;Strapi Admin does in <em>no way</em> interact with the Strapi API&quot;___</p>
+<p>The problem is: when you add business logic like calling external services for additional data or validation, notify external systems or automatically adding rows into other collections, you are lost with the admin UI. You can manipulate the database contents but its not at all aware of the logic you added to the frontend API.</p>
+<p>You <em>can</em> hack yourself into the admin API but there is nearly no documentation about it. I ended up reading lots of Strapi source code on github to learn about how the admin API works.</p>
+
+            <h2 id="there-are-users-and-then-there-are-users">
+              <a class="anchor" href="#there-are-users-and-then-there-are-users">
+                There are users and then there are users
+              </a>
+            </h2><p>Another design decision in Strapi was to have two kinds of users. One can access the frontend API only and others can access only the admin API. I assumed first that any user could have extra privileges given to access the admin UI. This is not the case.</p>
+<p>Bonus points to make things worse: e-mail adresses need to be unique among both kinds of users. If there ist a user with the mail <a href="mailto:&#116;&#101;&#115;&#x74;&#64;&#x65;&#x78;&#97;&#x6d;&#x70;&#108;&#x65;&#46;&#x63;&#x6f;&#x6d;">&#116;&#101;&#115;&#x74;&#64;&#x65;&#x78;&#97;&#x6d;&#x70;&#108;&#x65;&#46;&#x63;&#x6f;&#x6d;</a> for the frontend API, you cannot create another for the admin UI.</p>
+
+            <h2 id="ralations-to-the-users-table-are-complicated">
+              <a class="anchor" href="#ralations-to-the-users-table-are-complicated">
+                Ralations to the users table are complicated
+              </a>
+            </h2><p>No pun intended.</p>
+<p>I like to give my collections an <code>owner</code> field with a relation to the users table of the users and permissions plugin. This way I can easily connect objects (posts, comments, tasks, whatever) to their owners. That connection might be altered through business logic as well.</p>
+<p>However, in order to set or read the relation, the requesting user needs to have full access to the users table. This means they would be able to pull user data from the API as well.</p>
+<p>I work around this problem by setting and populating the owner fields separately through direct service calls in my controllers. This add one additional query to the database tough.</p>
+
+		</article>
+		<aside>
+		    <nav class="outline">
+        <h3>Post Content</h3>
+        <a href="#the-admin-ui-skips-all-business-logic-implemented-into-the-api" class="l2">The admin UI skips all business logic implemented into the API</a>
+<a href="#there-are-users-and-then-there-are-users" class="l2">There are users and then there are users</a>
+<a href="#ralations-to-the-users-table-are-complicated" class="l2">Ralations to the users table are complicated</a>
+</nav>
+            <nav class="posts">
+    <h3>Recent posts</h3>
+    <nav class="postList">
+    <a href="../strapi-quirks-you-should-know-about/"><span>2022-04-30 23:00:00</span> <span>Strapi quirks you should know about</span></a>
+<a href="../typed-event-system-for-typescript/"><span>2022-04-19 15:25:00</span> <span>A typed event system for Typescript</span></a>
+<a href="../access-denied-for-root-at-localhost/"><span>2021-12-09 18:00:00</span> <span>Access denied for 'root'@'localhost'</span></a>
+<a href="../media-query-organization-in-sass/"><span>2021-11-19 12:55:10</span> <span>Media Query organization in SASS</span></a>
+<a href="../redirect-response-pattern/"><span>2021-10-04 10:33:00</span> <span>The Redirect Response pattern</span></a>
+<a href="../introducing-and-using-obsidian/"><span>2021-09-28 22:09:10</span> <span>Introducing and using Obsidian</span></a>
+<a href="../mocking-modules-with-jest-and-typescript/"><span>2020-12-10 20:46:00</span> <span>Mocking modules with jest and typescript</span></a>
+<a href="../the-new-old-school/"><span>2020-10-14 23:22:00</span> <span>The new old school</span></a>
+<a href="../updates-about-react-hook-router/"><span>2019-04-30 13:58:56</span> <span>Updates about react hook router</span></a>
+<a href="../modern-and-clean-routing-with-hooks/"><span>2019-03-21 12:17:37</span> <span>Modern and clean routing with hooks</span></a>
+<a href="../create-a-react-component-as-npm-module/"><span>2019-03-06 15:42:31</span> <span>Create a react component as npm module</span></a>
+    </nav>
+</nav>	
+        </aside>
+		<nav class="marginal">
+            <a href="https://twitter.com/paratron">Follow me on Twitter</a>
+            <a href="https://github.com/Paratron">Follow me on Github</a>
+            <a href="/posts.rss">Blog RSS</a>
+        </nav>
+        <button class="darkModeButton" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        <script>
+            function toggleDarkMode(){
+                document.querySelector("html").toggleAttribute("data-dark");
+                localStorage.setItem("dark", document.querySelector("html").getAttribute("data-dark"));
+            }
+            if(localStorage.getItem("dark") !== null){
+                toggleDarkMode();
+            }
+        </script>
+    </body>
+</html>
