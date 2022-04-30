@@ -6,13 +6,21 @@
     <description>A web related blog by Christian Engel</description>
     <language>en-en</language>
     <copyright>Christian Engel</copyright>
-    <pubDate>Tue, 19 Apr 2022 13:25:19 GMT</pubDate>
+    <pubDate>Sat, 30 Apr 2022 20:59:25 GMT</pubDate>
     <image>
       <url>https://parastudios.de/assets/web-love.svg</url>
       <title>web://❤ - Logo</title>
       <link>https://parastudios.de</link>
     </image>
 
+    <item>
+      <title>Strapi quirks you should know about</title>
+      <description>When I first came across Strapi, I had some misconceptions about it which are not immediately clear when reading about the framework in their docs.</description>
+      <link>https://parastudios.de/strapi-quirks-you-should-know-about</link>
+      <author>Christian Engel</author>
+      <guid>strapi-quirks-you-should-know-about</guid>
+      <pubDate>Sat, 30 Apr 2022 21:00:00 GMT</pubDate>
+    </item>
     <item>
       <title>A typed event system for Typescript</title>
       <description>I wrote a simple, typed event emitter/subscriber system on the weekend.</description>
