@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link href="../assets/favicon.svg" rel="shortcut icon">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>Limit access of Strapi users to their own entries - web://❤</title>
+        <meta name="description" content="What I wanted was that when a user requested a list of or a certain entity, the backend should only respond with entities which belong to the user. By default, Strapi would send all entities from everyone." />
+        <link type="text/css" rel="stylesheet" href="../assets/style.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="/posts.rss" />
+        <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="@paratron">
+    <meta name="twitter:title" content="Limit access of Strapi users to their own entries">
+    <meta name="twitter:description" content="What I wanted was that when a user requested a list of or a certain entity, the backend should only respond with entities which belong to the user. By default, Strapi would send all entities from everyone.">
+    <meta name="twitter:image" content="https://parastudios.de/limit-access-of-strapi-users-to-their-own-entries/strapi-field-owner-relation.jpg">
+        <script async defer data-domain="parastudios.de" src="https://plausible.io/js/plausible.js"></script>
+    </head>
+    <body>
+		<header>
+			<a class="blog-title" href="/" title="web://❤"><img src="../assets/web-love-bright.svg" alt="web://❤" /></a>
+            <small>A web related blog by Christian Engel</small>
+		</header>
+		<article>
+			
+            <h1 id="limit-access-of-strapi-users-to-their-own-entries">
+              <a class="anchor" href="#limit-access-of-strapi-users-to-their-own-entries">
+                Limit access of Strapi users to their own entries
+              </a>
+            </h1><p>This was actually one of the first problems I encountered when I began using Strapi version 4 as a backend boilerplate for my <a href="https://robostreamer.com">streaming service for steam broadcasts</a> side project.</p>
+<p>What I wanted was that when a user requested a list of or a certain entity, the backend should only respond with entities which belong to the user. By default, Strapi would send all entities from everyone.</p>
+<p>Lets say you create a TODO app with a <code>/tasks</code> endpoint. Each user should be able to create tasks by doing <code>POST</code> requests but if they do a <code>GET</code> request to <code>/tasks</code> they should <em>not</em> see everyones tasks. Also <code>PUT</code> requests should only work when the given task belongs to the user.</p>
+<p>So how do we achieve this?</p>
+<blockquote>
+<p><strong>tl;dr</strong><br>Use a service call in the <code>create()</code> method to set the <code>owner</code> field with system privileges.
+Force a filter to the id of the current user in all other methods.</p>
+</blockquote>
+
+            <h2 id="extend-the-strapi-controller">
+              <a class="anchor" href="#extend-the-strapi-controller">
+                Extend the Strapi controller
+              </a>
+            </h2><p>Lets stay with the <code>tasks</code> example for this article. The moment you create that data type through the Strapi Content-Type Builder, Strapi will create a dummy controller in <code>/src/api/task/controllers/task.js</code>.</p>
+<p>The content will look like this:</p>
+<pre><code class="language-javascript"><span class="hljs-meta">&#x27;use strict&#x27;</span>;
+
+<span class="hljs-comment">/**
+ *  task controller
+ */</span>
+
+<span class="hljs-keyword">const</span> { createCoreController } = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@strapi/strapi&#x27;</span>).factories;
+
+<span class="hljs-built_in">module</span>.exports = createCoreController(<span class="hljs-string">&#x27;api::task.task&#x27;</span>);
+</code></pre>
+<p>In order to get the behavior we want to achieve, we need to roll our own <code>find()</code>, <code>findOne()</code>, <code>update()</code> and <code>delete()</code> methods to limit the access. The <code>create()</code> route needs to be defined as well, since - as far as I know - Strapi is unable to link the current user to an entry automatically.</p>
+<p>So lets begin with saving the creator of a task in its own field. I added a new field in the Strapi Content-Type Builder which is a relation to the users table. Yes, Strapi will keep track of the user which was the creator of an entry but this is not editable. If you as an administrator create a task for a user in the admin interface, your name will be set as the creator and you can&#39;t do anything to change that. So we create a &quot;real field&quot; on the entry.</p>
+<p><img src="./strapi-field-owner-relation.jpg" alt="Strapi relation field dialog"></p>
+
+            <h3 id="the-code-create-code-method">
+              <a class="anchor" href="#the-code-create-code-method">
+                The <code>create()</code> method
+              </a>
+            </h3><p>Now lets update the <code>task</code> controller so upon creation the <code>owner</code> field will be set to the id of the user which issued the request.</p>
+<pre><code class="language-javascript"><span class="hljs-meta">&#x27;use strict&#x27;</span>;
+
+<span class="hljs-comment">/**
+ *  task controller
+ */</span>
+
+<span class="hljs-keyword">const</span> { createCoreController } = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@strapi/strapi&#x27;</span>).factories;
+
+<span class="hljs-built_in">module</span>.exports = createCoreController(<span class="hljs-string">&#x27;api::task.task&#x27;</span>, {
+
+    <span class="hljs-keyword">async</span> create(ctx) {
+        <span class="hljs-keyword">const</span> user = ctx.state.user;
+
+        <span class="hljs-keyword">const</span> task = <span class="hljs-keyword">await</span> <span class="hljs-built_in">super</span>.create(ctx);
+
+        <span class="hljs-keyword">const</span> updated = <span class="hljs-keyword">await</span> strapi.entityService.update(<span class="hljs-string">&quot;api::task.task&quot;</span>, task.data.id, {
+            <span class="hljs-attr">data</span>: {
+                <span class="hljs-attr">owner</span>: user.id
+            }
+        });
+
+        <span class="hljs-keyword">return</span> result;
+    },
+
+});
+</code></pre>
+<p>With this code in place - whenever a user creates a new task via http <code>POST</code>, the controller will read the user object from the request state (a bit like a session), create a task and then immediately update it by setting the owner field to the user id.</p>
+
+            <h4 id="why-the-two-step-process-">
+              <a class="anchor" href="#why-the-two-step-process-">
+                Why the two step process?
+              </a>
+            </h4><p>The immediate thought I would have when reading the above code would be: why not sneaking the owner id into the payload that is passed to <code>super.create()</code> and avoiding the separete call to <code>update()</code>?</p>
+<p>Well, the reason is that this will only work when the issuing user has access to modify the <code>users</code> table. If not, there is no way Strapi will let you set that value. So by calling <code>super.create(ctx)</code> first, we make sure the task entry is created in the name of the user.</p>
+<p>Our next call to <code>strapi.entityService.update()</code> is done with system privileges, tough. The action is not related to a user so no permissions will be checked. The owner field will be set with super admin privileges (so be <em>extra careful</em> when doing this).</p>
+<blockquote>
+<p><strong>Heads up!</strong><br>The automatic owner assignment will <em>not work</em> when you create tasks inside the admin interface. Controller methods are only being called when requests are made through the public REST or GraphQL api.</p>
+</blockquote>
+
+            <h3 id="the-code-find-code-method">
+              <a class="anchor" href="#the-code-find-code-method">
+                The <code>find()</code> method
+              </a>
+            </h3><p>When the tasks application issues a <code>GET</code> request to <code>/tasks</code>, Strapi will return a list of <em>all</em> existing tasks, of <em>all</em> users. To prevent that, we need to forcefully add a filter to the query.</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">async</span> find(ctx){
+    <span class="hljs-keyword">const</span> user = ctx.state.user;
+
+    ctx.query.filters = {
+        ...(ctx.query.filters || {}),
+        <span class="hljs-attr">owner</span>: user.id
+    };
+
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">super</span>.find(ctx);
+}</code></pre>
+<p>Again, we get the current user object from the request state. Then we update the <code>filters</code> property of the <code>query</code> object for the request. We copy over all filters which have been passed by the user, then we set the <code>owner</code> field to the current users <code>id</code>. This way, the filter is always set serverside, even if the user would pass in a forged <code>owner</code> parameter from the outside. It would not be possible to request tasks of a different user.</p>
+
+            <h3 id="the-other-methods">
+              <a class="anchor" href="#the-other-methods">
+                The other methods
+              </a>
+            </h3><p>Since wrapping the other methods in the same filter is basically copy/paste, I will put them all together, here:</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">async</span> findOne(ctx){
+    <span class="hljs-keyword">const</span> user = ctx.state.user;
+
+    ctx.query.filters = {
+        ...(ctx.query.filters || {}),
+        <span class="hljs-attr">owner</span>: user.id
+    };
+
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">super</span>.findOne(ctx);
+},
+<span class="hljs-keyword">async</span> update(ctx){
+    <span class="hljs-keyword">const</span> user = ctx.state.user;
+
+    ctx.query.filters = {
+        ...(ctx.query.filters || {}),
+        <span class="hljs-attr">owner</span>: user.id
+    };
+
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">super</span>.update(ctx);
+},
+<span class="hljs-keyword">async</span> <span class="hljs-keyword">delete</span>(ctx){
+    <span class="hljs-keyword">const</span> user = ctx.state.user;
+
+    ctx.query.filters = {
+        ...(ctx.query.filters || {}),
+        <span class="hljs-attr">owner</span>: user.id
+    };
+
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">super</span>.delete(ctx);
+}</code></pre>
+<p>You may want to DRY your code a bit, but I actually copy/pasted the parts for real to be able to make other customizations more quickly.</p>
+
+		</article>
+		<aside>
+		    <nav class="outline">
+        <h3>Post Content</h3>
+        <a href="#extend-the-strapi-controller" class="l2">Extend the Strapi controller</a>
+<a href="#the-create-method" class="l3">The `create()` method</a>
+<a href="#why-the-two-step-process-" class="l4">Why the two step process?</a>
+<a href="#the-find-method" class="l3">The `find()` method</a>
+<a href="#the-other-methods" class="l3">The other methods</a>
+</nav>
+            <nav class="posts">
+    <h3>Recent posts</h3>
+    <nav class="postList">
+    <a href="../limit-access-of-strapi-users-to-their-own-entries/"><span>2022-05-15 21:30:00</span> <span>Limit access of Strapi users to their own entries</span></a>
+<a href="../strapi-quirks-you-should-know-about/"><span>2022-04-30 23:00:00</span> <span>Strapi quirks you should know about</span></a>
+<a href="../typed-event-system-for-typescript/"><span>2022-04-19 15:25:00</span> <span>A typed event system for Typescript</span></a>
+<a href="../access-denied-for-root-at-localhost/"><span>2021-12-09 18:00:00</span> <span>Access denied for 'root'@'localhost'</span></a>
+<a href="../media-query-organization-in-sass/"><span>2021-11-19 12:55:10</span> <span>Media Query organization in SASS</span></a>
+<a href="../redirect-response-pattern/"><span>2021-10-04 10:33:00</span> <span>The Redirect Response pattern</span></a>
+<a href="../introducing-and-using-obsidian/"><span>2021-09-28 22:09:10</span> <span>Introducing and using Obsidian</span></a>
+<a href="../mocking-modules-with-jest-and-typescript/"><span>2020-12-10 20:46:00</span> <span>Mocking modules with jest and typescript</span></a>
+<a href="../the-new-old-school/"><span>2020-10-14 23:22:00</span> <span>The new old school</span></a>
+<a href="../updates-about-react-hook-router/"><span>2019-04-30 13:58:56</span> <span>Updates about react hook router</span></a>
+<a href="../modern-and-clean-routing-with-hooks/"><span>2019-03-21 12:17:37</span> <span>Modern and clean routing with hooks</span></a>
+<a href="../create-a-react-component-as-npm-module/"><span>2019-03-06 15:42:31</span> <span>Create a react component as npm module</span></a>
+    </nav>
+</nav>	
+        </aside>
+		<nav class="marginal">
+            <a href="https://twitter.com/paratron">Follow me on Twitter</a>
+            <a href="https://github.com/Paratron">Follow me on Github</a>
+            <a href="/posts.rss">Blog RSS</a>
+        </nav>
+        <button class="darkModeButton" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        <script>
+            function toggleDarkMode(){
+                document.querySelector("html").toggleAttribute("data-dark");
+                localStorage.setItem("dark", document.querySelector("html").getAttribute("data-dark"));
+            }
+            if(localStorage.getItem("dark") !== null){
+                toggleDarkMode();
+            }
+        </script>
+    </body>
+</html>

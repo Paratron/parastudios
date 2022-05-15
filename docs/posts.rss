@@ -6,13 +6,21 @@
     <description>A web related blog by Christian Engel</description>
     <language>en-en</language>
     <copyright>Christian Engel</copyright>
-    <pubDate>Sat, 30 Apr 2022 20:59:25 GMT</pubDate>
+    <pubDate>Sun, 15 May 2022 19:28:13 GMT</pubDate>
     <image>
       <url>https://parastudios.de/assets/web-love.svg</url>
       <title>web://❤ - Logo</title>
       <link>https://parastudios.de</link>
     </image>
 
+    <item>
+      <title>Limit access of Strapi users to their own entries</title>
+      <description>What I wanted was that when a user requested a list of or a certain entity, the backend should only respond with entities which belong to the user. By default, Strapi would send all entities from everyone.</description>
+      <link>https://parastudios.de/limit-access-of-strapi-users-to-their-own-entries</link>
+      <author>Christian Engel</author>
+      <guid>limit-access-of-strapi-users-to-their-own-entries</guid>
+      <pubDate>Sun, 15 May 2022 19:30:00 GMT</pubDate>
+    </item>
     <item>
       <title>Strapi quirks you should know about</title>
       <description>When I first came across Strapi, I had some misconceptions about it which are not immediately clear when reading about the framework in their docs.</description>
