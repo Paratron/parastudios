@@ -131,4 +131,4 @@ This pattern allows to separate business logic completely from the UI layer (Rea
 
 A developer can develop the business logic as complete standalone javascript code which is better testable.
 
-And react components become easier because no fetching logic or other things need to be built into components. They can behave more like they should be: "dumb" templates.
+And react components become simpler because no fetching logic or other things need to be built into components. They can behave more like they should be: "dumb" templates.
