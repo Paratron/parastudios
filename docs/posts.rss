@@ -6,13 +6,21 @@
     <description>A web related blog by Christian Engel</description>
     <language>en-en</language>
     <copyright>Christian Engel</copyright>
-    <pubDate>Sun, 15 May 2022 19:28:13 GMT</pubDate>
+    <pubDate>Sat, 21 May 2022 07:32:19 GMT</pubDate>
     <image>
       <url>https://parastudios.de/assets/web-love.svg</url>
       <title>web://❤ - Logo</title>
       <link>https://parastudios.de</link>
     </image>
 
+    <item>
+      <title>Subscribable stores in React</title>
+      <description>Subscribable stores are a pattern which is relatively new for React applications.</description>
+      <link>https://parastudios.de/subscribable-stores-in-react</link>
+      <author>Christian Engel</author>
+      <guid>subscribable-stores-in-react</guid>
+      <pubDate>Sat, 21 May 2022 07:30:00 GMT</pubDate>
+    </item>
     <item>
       <title>Limit access of Strapi users to their own entries</title>
       <description>What I wanted was that when a user requested a list of or a certain entity, the backend should only respond with entities which belong to the user. By default, Strapi would send all entities from everyone.</description>
