@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link href="../assets/favicon.svg" rel="shortcut icon">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>Subscribable stores in React - web://❤</title>
+        <meta name="description" content="Subscribable stores are a pattern which is relatively new for React applications." />
+        <link type="text/css" rel="stylesheet" href="../assets/style.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="/posts.rss" />
+        <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="@paratron">
+    <meta name="twitter:title" content="Subscribable stores in React">
+    <meta name="twitter:description" content="Subscribable stores are a pattern which is relatively new for React applications.">
+    <meta name="twitter:image" content="https://parastudios.de/subscribable-stores-in-react/architecture.jpg">
+        <script async defer data-domain="parastudios.de" src="https://plausible.io/js/plausible.js"></script>
+    </head>
+    <body>
+		<header>
+			<a class="blog-title" href="/" title="web://❤"><img src="../assets/web-love-bright.svg" alt="web://❤" /></a>
+            <small>A web related blog by Christian Engel</small>
+		</header>
+		<article>
+			
+            <h1 id="subscribable-stores-in-react">
+              <a class="anchor" href="#subscribable-stores-in-react">
+                Subscribable stores in React
+              </a>
+            </h1><p><img src="./architecture.jpg" alt="Architecture - Modern windows on a wooden-like facade"></p>
+<p>I feel like the hype around Redux Stores cooled down a bit. Nowadays I only rarely see someone talking about it.</p>
+<p>I never really bought into the hype around Redux - but I really like the idea of having a centralized data store which lives outside the UI (namely your React components), can be updated from anywhere (web push or websockets anyone?) and components can subscribe to parts of the data and only render when <em>that</em> data changes. Not render on any changes.</p>
+<p>While React Context is a neat way to provide data to be acccessed from anywhere in your application, its a problem if some components only need partial data from that context. Any component using the context will need to render if <em>anything</em> inside the context changes - even if they don&#39;t care for it.</p>
+
+            <h2 id="usesyncexternalstore">
+              <a class="anchor" href="#usesyncexternalstore">
+                useSyncExternalStore
+              </a>
+            </h2><p>Thats one heavy name for a hook. Starting as an external package <code>useSubscription()</code>, the React developers went a long way to make it possible to integrate subscribable stores in React like they are very common in Svelte.</p>
+<p>Since I discovered the <code>useSubscription()</code> hook, I got a whole new world of storage related ideas in React.</p>
+<p>I used Svelte for a couple of projects so far and came to love its take on reactivity. While I personally think that only using <code>writable()</code> for vast collections of data is not enough (I&#39;ll write about that, soon), the ability to subscribe to subsets of the data in a writable store trough derived stores i a really flexible and performant idea.</p>
+<p>And with use of <code>useSyncExternalStore()</code> we can bring that idea to React (from v18 onwards)!</p>
+<p>If you use React &lt;18, use the npm package <a href="https://npmjs.com/package/use-subscription">use-subscription</a> instead.</p>
+
+            <h2 id="subscribable-stores">
+              <a class="anchor" href="#subscribable-stores">
+                Subscribable stores
+              </a>
+            </h2><p>The idea of a subscribable store is to have an object that holds a value you want to store inside it. The object might provide a method like <code>set()</code> to the outside through which the value inside the store can be updated. Other parts of the application who are interested in the value of the store can pass a callback function to the stores&#39; <code>subscribe()</code> method. Whenever the value inside the store is changed, all subscribe callbacks will be called with the new value so the subscribed parts of the application can react on the changes.</p>
+<p>Implementing that kind of store requires only a couple of lines of javascript:</p>
+<pre><code class="language-javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">createSubscribableStore</span>(<span class="hljs-params">initialValue</span>)</span>{
+    <span class="hljs-keyword">let</span> value = initialValue;
+    <span class="hljs-keyword">const</span> subscribers = [];
+
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-attr">set</span>: <span class="hljs-function">(<span class="hljs-params">nextValue</span>) =&gt;</span> {
+            value = nextValue;
+            subscribers.forEach(<span class="hljs-function">(<span class="hljs-params">cb</span>) =&gt;</span> cb(value));
+        },
+        <span class="hljs-attr">subscribe</span>: <span class="hljs-function">(<span class="hljs-params">callback</span>) =&gt;</span> {
+            subscribers.push(callback);
+            <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">unsubscribe</span>(<span class="hljs-params"></span>)</span>{
+                <span class="hljs-keyword">const</span> index = subscribers.findIndex(callback);
+                <span class="hljs-keyword">if</span>(index !== <span class="hljs-number">-1</span>){
+                    subscribers.splice(index, <span class="hljs-number">1</span>);
+                }
+            }
+        }
+    }
+}
+</code></pre>
+<p>The subscribable store pattern can be written by hand without having to install any dependencies. Yes, the above implementation does not provide an immutable value but you get the idea.</p>
+<p>The design has a drawback. Its no possible to simply read the store value once. A part of the app that wants to get the store value needs to subscribe to it, wait for the callback to be called and then unsubscribe. This is not ery performant. But when you really want to continuously observe a value, its great!</p>
+<p>The form of subscribable store used by Reacts <code>useSyncExternalStore</code> hook mitigates this drawback by requiring the store to expose a method to fetch the current value which upon call does - well - return the stores current value without needing to subscribe.</p>
+<p>Lets see how we can use such a subscribable store in React:</p>
+
+            <h3 id="basic-example">
+              <a class="anchor" href="#basic-example">
+                Basic example
+              </a>
+            </h3><pre><code class="language-javascript"><span class="hljs-keyword">import</span> {useSyncExternalStore} <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;react&quot;</span>;
+<span class="hljs-keyword">const</span> tickStore = createSubscribableStore(<span class="hljs-number">0</span>);
+
+<span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">useTicker</span>(<span class="hljs-params"></span>)</span>{
+    <span class="hljs-keyword">return</span> useSyncExternalStore(tickStore.subscribe, tickStore.getCurrentValue);
+}
+
+
+<span class="hljs-built_in">setInterval</span>(<span class="hljs-function">() =&gt;</span> {
+    tickStore.set(tickStore.getCurrentValue() + <span class="hljs-number">1</span>);
+}, <span class="hljs-number">1000</span>);</code></pre>
+<p>So what did we create here?</p>
+<p>We created a store and initiated it with the value <code>0</code>. We created a custom hook <code>useTicker()</code> which uses Reacts <code>useSyncExternalStore()</code> to subscribe to our ticker store.</p>
+<p>Finally, we created an interval which increases the ticker by 1 every second.</p>
+<p>All components which use the <code>useTicker()</code> hook will update automatically, when a new value is set on the ticker store.</p>
+
+            <h2 id="good-alternative-to-react-context">
+              <a class="anchor" href="#good-alternative-to-react-context">
+                Good alternative to React context
+              </a>
+            </h2><p>This pattern is a great alternative to the React context API when you want to make data available at multiple points in your app and also want to update that data rather frequently.</p>
+<p>The <code>useSyncExternalState()</code> hook has the ability to update the component when a subset of the store value changes!</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">const</span> weatherStore = createSubscribableStore({
+    <span class="hljs-attr">zip</span>: <span class="hljs-number">12345</span>,
+    <span class="hljs-attr">tempCelsius</span>: <span class="hljs-number">36</span>,
+    <span class="hljs-attr">humidity</span>: <span class="hljs-number">80</span>
+});
+
+<span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">useTemperature</span>(<span class="hljs-params"></span>)</span>{
+    <span class="hljs-keyword">return</span> useSyncExternalStore(weatherStore.subscribe, <span class="hljs-function">() =&gt;</span> weatherStore.getCurrentValue().tempCelsius);
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">useHumidity</span>(<span class="hljs-params"></span>)</span>{
+    <span class="hljs-keyword">return</span> useSyncExternalStore(weatherStore.subscribe, <span class="hljs-function">() =&gt;</span> weatherStore.getCurrentValue().humidity);
+}
+
+<span class="hljs-built_in">setInterval</span>(<span class="hljs-keyword">async</span> () =&gt; {
+    <span class="hljs-keyword">const</span> {zip} = weatherStore.getCurrentValue();
+   <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> fetch(<span class="hljs-string">`/zip/<span class="hljs-subst">${zip}</span>`</span>);
+    <span class="hljs-keyword">if</span>(response status === <span class="hljs-number">200</span>){
+        weatherStore.set(<span class="hljs-keyword">await</span> response.json());
+    }
+}, <span class="hljs-number">15000</span>);</code></pre>
+<p>There you go. We create a weather store and pull updates from a fictional weather API every 15 seconds.</p>
+<p>The two hooks provide access to temperature and humidity and will only update the components who use them when their respective value changes. The temperature hook won&#39;t trigger a re-render if only humidity changes.</p>
+<p>In my opinion, this blows context out of the water completely.</p>
+
+            <h2 id="whats-the-big-deal-">
+              <a class="anchor" href="#whats-the-big-deal-">
+                Whats the big deal?
+              </a>
+            </h2><p>So what, you might think. Now we have another option for data storage besides <code>useState()</code>, <code>useReducer()</code> and the context API.</p>
+<p>I think subscribable stores are a huge improvement because it makes this easier:</p>
+
+            <h3 id="separation-of-concerns">
+              <a class="anchor" href="#separation-of-concerns">
+                Separation of concerns
+              </a>
+            </h3><p>This pattern allows to separate business logic completely from the UI layer (React components).</p>
+<p>A developer can develop the business logic as complete standalone javascript code which is better testable.</p>
+<p>And react components become easier because no fetching logic or other things need to be built into components. They can behave more like they should be: &quot;dumb&quot; templates.</p>
+
+		</article>
+		<aside>
+		    <nav class="outline">
+        <h3>Post Content</h3>
+        <a href="#usesyncexternalstore" class="l2">useSyncExternalStore</a>
+<a href="#subscribable-stores" class="l2">Subscribable stores</a>
+<a href="#basic-example" class="l3">Basic example</a>
+<a href="#good-alternative-to-react-context" class="l2">Good alternative to React context</a>
+<a href="#whats-the-big-deal-" class="l2">Whats the big deal?</a>
+<a href="#separation-of-concerns" class="l3">Separation of concerns</a>
+</nav>
+            <nav class="posts">
+    <h3>Recent posts</h3>
+    <nav class="postList">
+    <a href="../subscribable-stores-in-react/"><span>2022-05-21 09:30:00</span> <span>Subscribable stores in React</span></a>
+<a href="../limit-access-of-strapi-users-to-their-own-entries/"><span>2022-05-15 21:30:00</span> <span>Limit access of Strapi users to their own entries</span></a>
+<a href="../strapi-quirks-you-should-know-about/"><span>2022-04-30 23:00:00</span> <span>Strapi quirks you should know about</span></a>
+<a href="../typed-event-system-for-typescript/"><span>2022-04-19 15:25:00</span> <span>A typed event system for Typescript</span></a>
+<a href="../access-denied-for-root-at-localhost/"><span>2021-12-09 18:00:00</span> <span>Access denied for 'root'@'localhost'</span></a>
+<a href="../media-query-organization-in-sass/"><span>2021-11-19 12:55:10</span> <span>Media Query organization in SASS</span></a>
+<a href="../redirect-response-pattern/"><span>2021-10-04 10:33:00</span> <span>The Redirect Response pattern</span></a>
+<a href="../introducing-and-using-obsidian/"><span>2021-09-28 22:09:10</span> <span>Introducing and using Obsidian</span></a>
+<a href="../mocking-modules-with-jest-and-typescript/"><span>2020-12-10 20:46:00</span> <span>Mocking modules with jest and typescript</span></a>
+<a href="../the-new-old-school/"><span>2020-10-14 23:22:00</span> <span>The new old school</span></a>
+<a href="../updates-about-react-hook-router/"><span>2019-04-30 13:58:56</span> <span>Updates about react hook router</span></a>
+<a href="../modern-and-clean-routing-with-hooks/"><span>2019-03-21 12:17:37</span> <span>Modern and clean routing with hooks</span></a>
+<a href="../create-a-react-component-as-npm-module/"><span>2019-03-06 15:42:31</span> <span>Create a react component as npm module</span></a>
+    </nav>
+</nav>	
+        </aside>
+		<nav class="marginal">
+            <a href="https://twitter.com/paratron">Follow me on Twitter</a>
+            <a href="https://github.com/Paratron">Follow me on Github</a>
+            <a href="/posts.rss">Blog RSS</a>
+        </nav>
+        <button class="darkModeButton" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        <script>
+            function toggleDarkMode(){
+                document.querySelector("html").toggleAttribute("data-dark");
+                localStorage.setItem("dark", document.querySelector("html").getAttribute("data-dark"));
+            }
+            if(localStorage.getItem("dark") !== null){
+                toggleDarkMode();
+            }
+        </script>
+    </body>
+</html>
