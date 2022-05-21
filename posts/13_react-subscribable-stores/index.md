@@ -22,7 +22,7 @@ Since I discovered the `useSubscription()` hook, I got a whole new world of stor
 
 I used Svelte for a couple of projects so far and came to love its take on reactivity. While I personally think that only using `writable()` for vast collections of data is not enough (I'll write about that, soon), the ability to subscribe to subsets of the data in a writable store trough derived stores i a really flexible and performant idea.
 
-And with use of `useSyncExternalStore()` we can bring that idea to React (from v18 onwards)!
+And with use of [`useSyncExternalStore()`](https://reactjs.org/docs/hooks-reference.html#usesyncexternalstore) we can bring that idea to React (from v18 onwards)!
 
 If you use React <18, use the npm package [use-subscription](https://npmjs.com/package/use-subscription) instead.
 
