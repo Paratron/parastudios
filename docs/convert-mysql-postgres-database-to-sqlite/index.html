@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link href="../assets/favicon.svg" rel="shortcut icon">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>Convert a MySQL or Postgres database to SQLite - web://❤</title>
+        <meta name="description" content="If you want to convert old MySQL-driven websites to static sites, a SQLite database on your harddrive could be helpful. Here is how to convert MySQL to SQLite." />
+        <link type="text/css" rel="stylesheet" href="../assets/style.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="/posts.rss" />
+        <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="@paratron">
+    <meta name="twitter:title" content="Convert a MySQL or Postgres database to SQLite">
+    <meta name="twitter:description" content="If you want to convert old MySQL-driven websites to static sites, a SQLite database on your harddrive could be helpful. Here is how to convert MySQL to SQLite.">
+    <meta name="twitter:image" content="https://parastudios.de/convert-mysql-postgres-database-to-sqlite/header.jpg">
+        <script async defer data-domain="parastudios.de" src="https://plausible.io/js/plausible.js"></script>
+    </head>
+    <body>
+		<header>
+			<a class="blog-title" href="/" title="web://❤"><img src="../assets/web-love-bright.svg" alt="web://❤" /></a>
+            <small>A web related blog by Christian Engel</small>
+		</header>
+		<article>
+			
+            <h1 id="convert-a-mysql-or-postgres-database-to-sqlite">
+              <a class="anchor" href="#convert-a-mysql-or-postgres-database-to-sqlite">
+                Convert a MySQL or Postgres database to SQLite
+              </a>
+            </h1><p><img src="./header.jpg" alt="The MySQL and Postgres logo together with arrows pointing on a SQLite logo, symbolizing conversion"></p>
+<p>I converted a couple of old PHP+MySQL Websites to static websites recently. The idea that an (old) PHP will query a database
+upon each page request and will render the information to HTML <em>every single time</em>, even if nothing changed seems &quot;silly&quot; nowadays
+in the wake of powerful static site generators.</p>
+<p>I started to convert some old projects to save a bit on hosting and be more flexible in the future.</p>
+<p>While static sites are a good thing which doesn&#39;t require a live database anymore, you still need your data at hand while you
+generate your site. And if you make some changes to your templates, you need to re-generate again and will need the data again.</p>
+<p>Since the goal of my move was to remove the hosted MySQL database, I got the idea to convert them to local SQLite databases, so I
+can have my data in a file on my computer (or even my repository) and forget about it. No need to install and run a local MySQL or
+Postgres server - not even in a docker container. My build process would simply query the SQLite database file directly when needed.</p>
+
+            <h2 id="dbeaver-to-the-rescue">
+              <a class="anchor" href="#dbeaver-to-the-rescue">
+                DBeaver to the rescue
+              </a>
+            </h2><p>In case you don&#39;t know DBeaver yet, <a href="https://dbeaver.io/">install it now</a>. Its a free, opensource sql database client which can connect
+to virtually any SQL database out there. Locally or remote (if you have arcane and god-forbidden tasks on a production database).</p>
+<p>I knew before that there is an importer function in DBeaver but with a SQLite database, this leaves you with the option to import from a CSV file. Shucks.
+I wanted to transfer the data directly from database to database.</p>
+<p>It was a bit counter-intuitive (for me), but I finally found how to do it - you have to <em>export</em> from your MySQL database and select the SQLite database
+as a target.</p>
+
+            <h2 id="step-by-step">
+              <a class="anchor" href="#step-by-step">
+                Step by step
+              </a>
+            </h2>
+            <h3 id="01-create-your-sqlite-connection">
+              <a class="anchor" href="#01-create-your-sqlite-connection">
+                01: Create your SQLite connection
+              </a>
+            </h3><p>At first, you need a SQLite database as your receiving target. If you already have such a file and just want to move a couple of additional tables
+into it - great! If not, just create an empty file inside your project folder and name it something like <code>db.sqlite3</code> - you can pick whatever
+file extension you like - I thought <code>sqlite3</code> was appropriate.</p>
+<p>Now you need to add the SQLite database in DBeaver. Click on on the little plug icon with the plus, labelled <code>&quot;New Database Connection&quot;&quot;</code>.</p>
+<p>In the connection window, search for SQLite and continue.</p>
+<p><img src="./create-sqlite-connection.jpg" alt="The Create Database Connection dialog with SQLite selected"></p>
+<p>Next, you select the database file you already have or created before and click <code>&quot;Finish&quot;</code>.</p>
+<p><img src="./select-sqlite-file.jpg" alt="Select your SQLite Database file and click Finish"></p>
+
+            <h3 id="02-connect-to-your-mysql-or-postgres-database">
+              <a class="anchor" href="#02-connect-to-your-mysql-or-postgres-database">
+                02: Connect to your MySQL or Postgres Database
+              </a>
+            </h3><p>If you don&#39;t already have your &quot;big&quot; database in DBeaver, follow basically the same steps
+as with the SQLite database but pick your database type and enter your login credencials,
+maybe also with an SSL tunnel. </p>
+<blockquote>
+<p>I wrote an article before about having auth problems when connecting to a MySQL server over SSH.
+Read about it, here: <a href="/access-denied-for-root-at-localhost/">Access denied for &#39;root&#39;@&#39;localhost&#39;</a></p>
+</blockquote>
+
+            <h3 id="03-select-which-tables-to-migrate">
+              <a class="anchor" href="#03-select-which-tables-to-migrate">
+                03: Select which tables to migrate
+              </a>
+            </h3><p>Now you have both your SQLite and your original database in your database navigator.</p>
+<p>Open the <code>&quot;Tables&quot;</code> folder of your source database and select the tables you want to migrate
+using <code>CTRL+CLICK</code> and/or <code>SHIFT+CLICK</code>.</p>
+<p><img src="./select-tables-to-migrate.jpg" alt="DBeaver Database Navigator showing the two databases and the selected tables"></p>
+<p>After you selected all necessary tables (in my case, not all tables were necessary), do a <code>RIGHT-CLICK</code> on your selection and choose
+<code>&quot;Export Data&quot;</code>.</p>
+<p>A <code>&quot;Data Transfer&quot;</code> window will open with the option <code>&quot;Database&quot;</code> preselected - just click <code>&quot;Next&quot;</code>.</p>
+
+            <h3 id="04-apply-a-table-mapping">
+              <a class="anchor" href="#04-apply-a-table-mapping">
+                04: Apply a table mapping
+              </a>
+            </h3><p>In the next window, you can decide if you want to rename the tables you want to migrate in any way.
+I chose to rename them because I preferred a simpler naming.</p>
+<p>To rename a table in your SQLite database, <code>DOUBLE-CLICK</code> on the cell in the <code>&quot;Target&quot;</code> column.</p>
+<p><img src="./table-mapping.jpg" alt="The table mapping dialog showing how the selected tables will be named in the SQLite database"></p>
+<p>If you are done, click <code>&quot;Next&quot;</code>.</p>
+
+            <h3 id="05-optionally-provide-some-migration-settings">
+              <a class="anchor" href="#05-optionally-provide-some-migration-settings">
+                05: Optionally provide some migration settings
+              </a>
+            </h3><p>In my case, no changes were necessary in the next two steps of the <code>&quot;Data Transfer&quot;</code> dialog.</p>
+<p>I left the points <code>&quot;Extraction settings&quot;</code> and <code>&quot;Data load settings&quot;</code> as they were and finally
+hit <code>&quot;Proceed&quot;</code> on the conclusionary <code>&quot;Confirm&quot;</code> page. After a couple of seconds, all my data 
+had been transferred to my SQLite database.</p>
+
+            <h3 id="06-all-done">
+              <a class="anchor" href="#06-all-done">
+                06: All done
+              </a>
+            </h3><p>As you can see: all data has been transferred from my MySQL (MariaDB) database
+to my local SQLite file. In my case, I was now able to create a static website
+for the data and shut down the previous hosting completely.</p>
+<p><img src="./migration-done.jpg" alt="Showing the entries of the &quot;category&quot; table after the successful migration"></p>
+
+		</article>
+		<aside>
+		    <nav class="outline">
+        <h3>Post Content</h3>
+        <a href="#dbeaver-to-the-rescue" class="l2">DBeaver to the rescue</a>
+<a href="#step-by-step" class="l2">Step by step</a>
+<a href="#01-create-your-sqlite-connection" class="l3">01: Create your SQLite connection</a>
+<a href="#02-connect-to-your-mysql-or-postgres-database" class="l3">02: Connect to your MySQL or Postgres Database</a>
+<a href="#03-select-which-tables-to-migrate" class="l3">03: Select which tables to migrate</a>
+<a href="#04-apply-a-table-mapping" class="l3">04: Apply a table mapping</a>
+<a href="#05-optionally-provide-some-migration-settings" class="l3">05: Optionally provide some migration settings</a>
+<a href="#06-all-done" class="l3">06: All done</a>
+</nav>
+            <nav class="posts">
+    <h3>Recent posts</h3>
+    <nav class="postList">
+    <a href="../convert-mysql-postgres-database-to-sqlite/"><span>2022-05-30 13:00:00</span> <span>Convert a MySQL or Postgres database to SQLite</span></a>
+<a href="../subscribable-stores-in-react/"><span>2022-05-21 09:30:00</span> <span>Subscribable stores in React</span></a>
+<a href="../limit-access-of-strapi-users-to-their-own-entries/"><span>2022-05-15 21:30:00</span> <span>Limit access of Strapi users to their own entries</span></a>
+<a href="../strapi-quirks-you-should-know-about/"><span>2022-04-30 23:00:00</span> <span>Strapi quirks you should know about</span></a>
+<a href="../typed-event-system-for-typescript/"><span>2022-04-19 15:25:00</span> <span>A typed event system for Typescript</span></a>
+<a href="../access-denied-for-root-at-localhost/"><span>2021-12-09 18:00:00</span> <span>Access denied for 'root'@'localhost'</span></a>
+<a href="../media-query-organization-in-sass/"><span>2021-11-19 12:55:10</span> <span>Media Query organization in SASS</span></a>
+<a href="../redirect-response-pattern/"><span>2021-10-04 10:33:00</span> <span>The Redirect Response pattern</span></a>
+<a href="../introducing-and-using-obsidian/"><span>2021-09-28 22:09:10</span> <span>Introducing and using Obsidian</span></a>
+<a href="../mocking-modules-with-jest-and-typescript/"><span>2020-12-10 20:46:00</span> <span>Mocking modules with jest and typescript</span></a>
+<a href="../the-new-old-school/"><span>2020-10-14 23:22:00</span> <span>The new old school</span></a>
+<a href="../updates-about-react-hook-router/"><span>2019-04-30 13:58:56</span> <span>Updates about react hook router</span></a>
+<a href="../modern-and-clean-routing-with-hooks/"><span>2019-03-21 12:17:37</span> <span>Modern and clean routing with hooks</span></a>
+<a href="../create-a-react-component-as-npm-module/"><span>2019-03-06 15:42:31</span> <span>Create a react component as npm module</span></a>
+    </nav>
+</nav>	
+        </aside>
+		<nav class="marginal">
+            <a href="https://twitter.com/paratron">Follow me on Twitter</a>
+            <a href="https://github.com/Paratron">Follow me on Github</a>
+            <a href="/posts.rss">Blog RSS</a>
+        </nav>
+        <button class="darkModeButton" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        <script>
+            function toggleDarkMode(){
+                document.querySelector("html").toggleAttribute("data-dark");
+                localStorage.setItem("dark", document.querySelector("html").getAttribute("data-dark"));
+            }
+            if(localStorage.getItem("dark") !== null){
+                toggleDarkMode();
+            }
+        </script>
+    </body>
+</html>
