@@ -6,13 +6,21 @@
     <description>A web related blog by Christian Engel</description>
     <language>en-en</language>
     <copyright>Christian Engel</copyright>
-    <pubDate>Mon, 30 May 2022 12:45:57 GMT</pubDate>
+    <pubDate>Sun, 22 Sep 2024 09:00:39 GMT</pubDate>
     <image>
       <url>https://parastudios.de/assets/web-love.svg</url>
       <title>web://❤ - Logo</title>
       <link>https://parastudios.de</link>
     </image>
 
+    <item>
+      <title>Maximizing Security and User Experience in OAuth flow on a SvelteKit app</title>
+      <description>Discover how to implement a robust OAuth flow in a SvelteKit application, focusing on enhancing both security measures and user experience. Learn about leveraging the state parameter, preventing CSRF attacks, and creating a smoother authentication process.</description>
+      <link>https://parastudios.de/maximizing-security-user-experience-oauth-sveltekit</link>
+      <author>Christian Engel</author>
+      <guid>maximizing-security-user-experience-oauth-sveltekit</guid>
+      <pubDate>Sun, 22 Sep 2024 09:00:00 GMT</pubDate>
+    </item>
     <item>
       <title>Convert a MySQL or Postgres database to SQLite</title>
       <description>If you want to convert old MySQL-driven websites to static sites, a SQLite database on your harddrive could be helpful. Here is how to convert MySQL to SQLite.</description>

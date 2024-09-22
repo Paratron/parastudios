@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link href="../assets/favicon.svg" rel="shortcut icon">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>Maximizing Security and User Experience in OAuth flow on a SvelteKit app - web://❤</title>
+        <meta name="description" content="Discover how to implement a robust OAuth flow in a SvelteKit application, focusing on enhancing both security measures and user experience. Learn about leveraging the state parameter, preventing CSRF attacks, and creating a smoother authentication process." />
+        <link type="text/css" rel="stylesheet" href="../assets/style.css" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="/posts.rss" />
+        <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="@paratron">
+    <meta name="twitter:title" content="Maximizing Security and User Experience in OAuth flow on a SvelteKit app">
+    <meta name="twitter:description" content="Discover how to implement a robust OAuth flow in a SvelteKit application, focusing on enhancing both security measures and user experience. Learn about leveraging the state parameter, preventing CSRF attacks, and creating a smoother authentication process.">
+    <meta name="twitter:image" content="https://parastudios.de/assets/social.jpg">
+        <script async defer data-domain="parastudios.de" src="https://plausible.io/js/plausible.js"></script>
+    </head>
+    <body>
+		<header>
+			<a class="blog-title" href="/" title="web://❤"><img src="../assets/web-love-bright.svg" alt="web://❤" /></a>
+            <small>A web related blog by Christian Engel</small>
+		</header>
+		<article>
+			
+            <h1 id="maximizing-security-and-user-experience-in-oauth-flow-on-a-sveltekit-app">
+              <a class="anchor" href="#maximizing-security-and-user-experience-in-oauth-flow-on-a-sveltekit-app">
+                Maximizing Security and User Experience in OAuth flow on a SvelteKit app
+              </a>
+            </h1><p>As a web developer, I&#39;ve implemented OAuth flows in various applications over the years. However, my last deep dive into OAuth was a couple of years ago. Recently, I had the opportunity to implement OAuth in a SvelteKit project, which led me to revisit and refine my approach to authentication, with a renewed focus on enhancing both security and user experience.</p>
+
+            <h2 id="a-quick-note-on-user-experience">
+              <a class="anchor" href="#a-quick-note-on-user-experience">
+                A Quick Note on User Experience
+              </a>
+            </h2><p>While working on this OAuth integration, I was reminded of a frustration I&#39;ve encountered as a user. Often, when returning to a web service I haven&#39;t used in a while, I&#39;m unsure whether I originally signed up with email/password or through an OAuth provider. </p>
+<p>Choosing the OAuth option in these situations sometimes results in the unexpected creation of a new account, without any warning or confirmation. This can lead to confusion and accidental account duplication.</p>
+<p>This realization influenced my approach when implementing OAuth in my current project. I wanted to create a system that clearly differentiates between login and registration, providing a smoother and more intuitive experience for users.</p>
+
+            <h2 id="the-oauth-challenge">
+              <a class="anchor" href="#the-oauth-challenge">
+                The OAuth Challenge
+              </a>
+            </h2><p>OAuth is a powerful authentication protocol, but it comes with its own set of challenges. One common issue is the ambiguity between user registration and login – many implementations don&#39;t differentiate between these actions, potentially leading to user confusion and sometimes security risks.</p>
+
+            <h2 id="the-state-parameter-a-key-player-in-oauth-security">
+              <a class="anchor" href="#the-state-parameter-a-key-player-in-oauth-security">
+                The State Parameter: A Key Player in OAuth Security
+              </a>
+            </h2><p>Before diving into the implementation details, it&#39;s crucial to understand the role of the &#39;state&#39; parameter in OAuth flows. The state parameter is a security feature that helps prevent cross-site request forgery (CSRF) attacks and maintains application state across the authentication process.</p>
+<p>For a comprehensive understanding of the state parameter and its importance, I recommend reading <a href="https://auth0.com/docs/secure/attack-protection/state-parameters">this article of Auth0</a> about the topic.</p>
+
+            <h2 id="my-approach-leveraging-the-state-parameter">
+              <a class="anchor" href="#my-approach-leveraging-the-state-parameter">
+                My Approach: Leveraging the State Parameter
+              </a>
+            </h2><p>In my implementation, I decided to use the state parameter not just for security, but also to enhance the user experience. Here&#39;s how I approached it:</p>
+<ol>
+<li>I include both a CSRF token and an &#39;intent&#39; in the state object.</li>
+<li>The &#39;intent&#39; can be either <code>login</code> or <code>register</code>, depending on which action the user was attempting.</li>
+<li>When the OAuth provider redirects back to the application, I use this intent to determine how to handle the authentication.</li>
+</ol>
+<p>Here&#39;s a snippet of how I set up the OAuth initiation using pseudocode:</p>
+<pre><code class="language-typescript"><span class="hljs-keyword">const</span> csrfToken = generateCSRFToken(); <span class="hljs-comment">// Stored in a httpOnly cookie</span>
+<span class="hljs-keyword">const</span> intent = user.isOnRegisterPage ? <span class="hljs-string">&#x27;register&#x27;</span> : <span class="hljs-string">&#x27;login&#x27;</span>;
+<span class="hljs-keyword">const</span> state = <span class="hljs-built_in">JSON</span>.stringify({ csrfToken, intent });
+
+<span class="hljs-comment">// Store CSRF token in a httpOnly cookie for enhanced security</span>
+cookies.set(<span class="hljs-string">&#x27;csrfToken&#x27;</span>, csrfToken, { httpOnly: <span class="hljs-literal">true</span>, secure: <span class="hljs-literal">true</span>, sameSite: <span class="hljs-string">&#x27;strict&#x27;</span> });
+
+<span class="hljs-comment">// Redirect to OAuth provider with state parameter</span>
+redirect(createOAuthLink(<span class="hljs-string">&quot;discord&quot;</span>, csrfToken, state));
+<span class="hljs-comment">// https://discord.com/oauth2/authorize?client_id=...&amp;response_type=code&amp;redirect_uri=...&amp;state={&quot;csrfToken&quot;: &quot;...&quot;, &quot;intent&quot;: &quot;login&quot;}</span></code></pre>
+
+            <h2 id="security-considerations">
+              <a class="anchor" href="#security-considerations">
+                Security Considerations
+              </a>
+            </h2><p>Security was a top priority in my implementation. Here are some key security features:</p>
+<ol>
+<li><p><strong>CSRF Protection</strong>: I use a CSRF token stored in a httpOnly cookie and included in the state parameter to prevent cross-site request forgery attacks.</p>
+</li>
+<li><p><strong>Server-Side Verification</strong>: All OAuth logic is handled server-side in the API, reducing the risk of client-side manipulation.</p>
+</li>
+<li><p><strong>Pre-Registration Tokens</strong>: For new users attempting to log in, I generate a short-lived pre-registration token, adding an extra layer of security.</p>
+</li>
+</ol>
+<p>Here&#39;s how I handle the OAuth callback in the SvelteKit server route:</p>
+<pre><code class="language-typescript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> GET: RequestHandler = <span class="hljs-keyword">async</span> ({ params, url, cookies, locals }) =&gt; {
+    <span class="hljs-keyword">const</span> { provider } = params;
+    <span class="hljs-keyword">const</span> code = url.searchParams.get(<span class="hljs-string">&#x27;code&#x27;</span>);
+    <span class="hljs-keyword">const</span> state = url.searchParams.get(<span class="hljs-string">&#x27;state&#x27;</span>);
+    <span class="hljs-keyword">const</span> storedState = cookies.get(<span class="hljs-string">&#x27;csrfToken&#x27;</span>);
+
+    <span class="hljs-comment">// Clean up CSRF token</span>
+    cookies.delete(<span class="hljs-string">&#x27;csrfToken&#x27;</span>, { path: <span class="hljs-string">&#x27;/&#x27;</span> });
+
+    <span class="hljs-keyword">try</span> {
+        <span class="hljs-keyword">if</span> (!provider || !code || !state || state !== storedState) {
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">&quot;Invalid OAuth parameters&quot;</span>);
+        }
+
+        <span class="hljs-keyword">const</span> { intent } = <span class="hljs-built_in">JSON</span>.parse(atob(state));
+        <span class="hljs-comment">// The apiClient is a thin wrapper over the REST API of my service</span>
+        <span class="hljs-keyword">const</span> result = <span class="hljs-keyword">await</span> locals.apiClient.auth.oauth(provider, code, intent);
+
+        <span class="hljs-keyword">if</span> (<span class="hljs-string">&#x27;sessionToken&#x27;</span> <span class="hljs-keyword">in</span> result) {
+            setSessionTokenCookie(cookies, result.sessionToken);
+            <span class="hljs-keyword">return</span> redirect(<span class="hljs-number">303</span>, <span class="hljs-string">&#x27;/dashboard&#x27;</span>);
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-string">&#x27;preRegistrationToken&#x27;</span> <span class="hljs-keyword">in</span> result) {
+            cookies.set(<span class="hljs-string">&#x27;prt&#x27;</span>, result.preRegistrationToken, { 
+                path: <span class="hljs-string">&#x27;/&#x27;</span>, 
+                httpOnly: <span class="hljs-literal">true</span>, 
+                maxAge: <span class="hljs-number">600</span>, <span class="hljs-comment">// 10 minutes</span>
+                sameSite: <span class="hljs-string">&#x27;strict&#x27;</span>
+            });
+            <span class="hljs-keyword">return</span> redirect(<span class="hljs-number">303</span>, <span class="hljs-string">&#x27;/confirm-registration&#x27;</span>);
+        }
+
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">&quot;Unexpected response from OAuth endpoint&quot;</span>);
+    } <span class="hljs-keyword">catch</span> (err) {
+        <span class="hljs-built_in">console</span>.error(<span class="hljs-string">&#x27;Authentication error:&#x27;</span>, err);
+        <span class="hljs-keyword">return</span> redirect(<span class="hljs-number">303</span>, <span class="hljs-string">&#x27;/oauth-fail&#x27;</span>);
+    }
+};</code></pre>
+
+            <h2 id="enhancing-user-experience">
+              <a class="anchor" href="#enhancing-user-experience">
+                Enhancing User Experience
+              </a>
+            </h2><p>This implementation aims to improve the user experience in several ways:</p>
+<ol>
+<li><p><strong>Clear User Journey</strong>: By differentiating between login and registration intents, users always end up where they expect to be.</p>
+</li>
+<li><p><strong>Preventing Accidental Registrations</strong>: Users attempting to log in won&#39;t accidentally create a new account if they don&#39;t have one.</p>
+</li>
+<li><p><strong>Smooth Registration Process</strong>: New users going through the registration flow get a streamlined experience.</p>
+</li>
+<li><p><strong>Informative Feedback</strong>: Users receive clear messages about their account status, reducing confusion.</p>
+</li>
+</ol>
+
+            <h2 id="the-benefits">
+              <a class="anchor" href="#the-benefits">
+                The Benefits
+              </a>
+            </h2><p>This OAuth implementation offers several advantages:</p>
+<ol>
+<li><p><strong>Enhanced Security</strong>: By handling OAuth server-side, implementing CSRF protection, and using httpOnly cookies, I&#39;ve created a more secure authentication system.</p>
+</li>
+<li><p><strong>Improved User Experience</strong>: Users have a clear path whether they&#39;re logging in or registering, reducing confusion and frustration.</p>
+</li>
+<li><p><strong>Flexibility</strong>: The system can easily handle multiple OAuth providers while maintaining consistent behavior.</p>
+</li>
+<li><p><strong>Compliance Ready</strong>: This approach helps in meeting various regulatory requirements by ensuring user consent in the registration process.</p>
+</li>
+</ol>
+
+            <h2 id="conclusion">
+              <a class="anchor" href="#conclusion">
+                Conclusion
+              </a>
+            </h2><p>Revisiting OAuth implementation after a few years was a refreshing experience. It reminded me that authentication is an ever-evolving field, and there&#39;s always room for improvement in both security and user experience.</p>
+<p>This implementation in SvelteKit demonstrates that with careful consideration, we can create authentication flows that are both secure and user-friendly. The key lies not just in the technical implementation, but in how well it serves and protects the users.</p>
+<p>Remember, while this approach worked well for my project, every application has unique needs. Always consider your specific requirements and consult the latest security best practices when implementing authentication in your projects.</p>
+<p>By sharing my approach, I hope to contribute to a discussion on how we can make authentication processes more user-friendly and secure, preventing the kind of confusion and accidental account creation that I&#39;ve experienced far too often.</p>
+<p>Happy coding!</p>
+
+		</article>
+		<aside>
+		    <nav class="outline">
+        <h3>Post Content</h3>
+        <a href="#a-quick-note-on-user-experience" class="l2">A Quick Note on User Experience</a>
+<a href="#the-oauth-challenge" class="l2">The OAuth Challenge</a>
+<a href="#the-state-parameter-a-key-player-in-oauth-security" class="l2">The State Parameter: A Key Player in OAuth Security</a>
+<a href="#my-approach-leveraging-the-state-parameter" class="l2">My Approach: Leveraging the State Parameter</a>
+<a href="#security-considerations" class="l2">Security Considerations</a>
+<a href="#enhancing-user-experience" class="l2">Enhancing User Experience</a>
+<a href="#the-benefits" class="l2">The Benefits</a>
+<a href="#conclusion" class="l2">Conclusion</a>
+</nav>
+            <nav class="posts">
+    <h3>Recent posts</h3>
+    <nav class="postList">
+    <a href="../maximizing-security-user-experience-oauth-sveltekit/"><span>2024-09-22 11:00:00</span> <span>Maximizing Security and User Experience in OAuth flow on a SvelteKit app</span></a>
+<a href="../convert-mysql-postgres-database-to-sqlite/"><span>2022-05-30 13:00:00</span> <span>Convert a MySQL or Postgres database to SQLite</span></a>
+<a href="../subscribable-stores-in-react/"><span>2022-05-21 09:30:00</span> <span>Subscribable stores in React</span></a>
+<a href="../limit-access-of-strapi-users-to-their-own-entries/"><span>2022-05-15 21:30:00</span> <span>Limit access of Strapi users to their own entries</span></a>
+<a href="../strapi-quirks-you-should-know-about/"><span>2022-04-30 23:00:00</span> <span>Strapi quirks you should know about</span></a>
+<a href="../typed-event-system-for-typescript/"><span>2022-04-19 15:25:00</span> <span>A typed event system for Typescript</span></a>
+<a href="../access-denied-for-root-at-localhost/"><span>2021-12-09 18:00:00</span> <span>Access denied for 'root'@'localhost'</span></a>
+<a href="../media-query-organization-in-sass/"><span>2021-11-19 12:55:10</span> <span>Media Query organization in SASS</span></a>
+<a href="../redirect-response-pattern/"><span>2021-10-04 10:33:00</span> <span>The Redirect Response pattern</span></a>
+<a href="../introducing-and-using-obsidian/"><span>2021-09-28 22:09:10</span> <span>Introducing and using Obsidian</span></a>
+<a href="../mocking-modules-with-jest-and-typescript/"><span>2020-12-10 20:46:00</span> <span>Mocking modules with jest and typescript</span></a>
+<a href="../the-new-old-school/"><span>2020-10-14 23:22:00</span> <span>The new old school</span></a>
+<a href="../updates-about-react-hook-router/"><span>2019-04-30 13:58:56</span> <span>Updates about react hook router</span></a>
+<a href="../modern-and-clean-routing-with-hooks/"><span>2019-03-21 12:17:37</span> <span>Modern and clean routing with hooks</span></a>
+<a href="../create-a-react-component-as-npm-module/"><span>2019-03-06 15:42:31</span> <span>Create a react component as npm module</span></a>
+    </nav>
+</nav>	
+        </aside>
+		<nav class="marginal">
+            <a href="https://twitter.com/paratron">Follow me on Twitter</a>
+            <a href="https://github.com/Paratron">Follow me on Github</a>
+            <a href="/posts.rss">Blog RSS</a>
+        </nav>
+        <button class="darkModeButton" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        <script>
+            function toggleDarkMode(){
+                document.querySelector("html").toggleAttribute("data-dark");
+                localStorage.setItem("dark", document.querySelector("html").getAttribute("data-dark"));
+            }
+            if(localStorage.getItem("dark") !== null){
+                toggleDarkMode();
+            }
+        </script>
+    </body>
+</html>
