@@ -7,6 +7,8 @@ tags: ["oauth", "sveltekit", "authentication", "security", "user-experience", "w
 ---
 # Maximizing Security and User Experience in OAuth flow on a SvelteKit app
 
+![An image of an ancient castle](./header.webp)
+
 As a web developer, I've implemented OAuth flows in various applications over the years. However, my last deep dive into OAuth was a couple of years ago. Recently, I had the opportunity to implement OAuth in a SvelteKit project, which led me to revisit and refine my approach to authentication, with a renewed focus on enhancing both security and user experience.
 
 ## A Quick Note on User Experience
