@@ -11,6 +11,15 @@ tags: ["oauth", "sveltekit", "authentication", "security", "user-experience", "w
 
 As a web developer, I've implemented OAuth flows in various applications over the years. However, my last deep dive into OAuth was a couple of years ago. Recently, I had the opportunity to implement OAuth in a SvelteKit project, which led me to revisit and refine my approach to authentication, with a renewed focus on enhancing both security and user experience.
 
+> ## TL;DR
+>
+> This post explores an enhanced OAuth implementation that prioritizes both security and user experience. Key features include:
+> 1) Using the OAuth state parameter to differentiate between login and registration intents.
+> 2) Implementing robust CSRF protection with httpOnly cookies.
+> 3) Creating a pre-registration flow for new users to prevent accidental account creation.
+> 4) Handling all OAuth logic server-side to enhance security.
+> While the implementation uses SvelteKit, the concepts and strategies discussed are applicable to OAuth flows in any web framework. This approach aims to create a more intuitive authentication process while maintaining high security standards.
+
 ## A Quick Note on User Experience
 
 While working on this OAuth integration, I was reminded of a frustration I've encountered as a user. Often, when returning to a web service I haven't used in a while, I'm unsure whether I originally signed up with email/password or through an OAuth provider. 
