@@ -6,7 +6,7 @@
     <description>A web related blog by Christian Engel</description>
     <language>en-en</language>
     <copyright>Christian Engel</copyright>
-    <pubDate>Mon, 23 Sep 2024 20:33:15 GMT</pubDate>
+    <pubDate>Mon, 23 Sep 2024 20:36:21 GMT</pubDate>
     <image>
       <url>https://parastudios.de/assets/web-love.svg</url>
       <title>web://❤ - Logo</title>
@@ -14,11 +14,11 @@
     </image>
 
     <item>
-      <title>Stop Coding Already! The Power of Pre-Coding Planning</title>
+      <title>Stop Coding Already!</title>
       <description>Discover why taking a step back to plan before diving into coding can lead to more efficient and successful projects. Learn about the benefits of mental modeling, note-taking, and using AI tools to refine your ideas before writing a single line of code.</description>
-      <link>https://parastudios.de/stop-coding-already-power-of-pre-coding-planning</link>
+      <link>https://parastudios.de/stop-coding-already</link>
       <author>Christian Engel</author>
-      <guid>stop-coding-already-power-of-pre-coding-planning</guid>
+      <guid>stop-coding-already</guid>
       <pubDate>Mon, 23 Sep 2024 20:30:00 GMT</pubDate>
     </item>
     <item>
