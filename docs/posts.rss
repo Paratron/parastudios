@@ -6,13 +6,21 @@
     <description>A web related blog by Christian Engel</description>
     <language>en-en</language>
     <copyright>Christian Engel</copyright>
-    <pubDate>Sun, 22 Sep 2024 09:11:14 GMT</pubDate>
+    <pubDate>Mon, 23 Sep 2024 20:33:15 GMT</pubDate>
     <image>
       <url>https://parastudios.de/assets/web-love.svg</url>
       <title>web://❤ - Logo</title>
       <link>https://parastudios.de</link>
     </image>
 
+    <item>
+      <title>Stop Coding Already! The Power of Pre-Coding Planning</title>
+      <description>Discover why taking a step back to plan before diving into coding can lead to more efficient and successful projects. Learn about the benefits of mental modeling, note-taking, and using AI tools to refine your ideas before writing a single line of code.</description>
+      <link>https://parastudios.de/stop-coding-already-power-of-pre-coding-planning</link>
+      <author>Christian Engel</author>
+      <guid>stop-coding-already-power-of-pre-coding-planning</guid>
+      <pubDate>Mon, 23 Sep 2024 20:30:00 GMT</pubDate>
+    </item>
     <item>
       <title>Maximizing Security and User Experience in OAuth flow on a SvelteKit app</title>
       <description>Discover how to implement a robust OAuth flow in a SvelteKit application, focusing on enhancing both security measures and user experience. Learn about leveraging the state parameter, preventing CSRF attacks, and creating a smoother authentication process.</description>
