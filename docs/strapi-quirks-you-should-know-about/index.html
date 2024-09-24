@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
         <title>Strapi quirks you should know about - dev://❤</title>
         <meta name="description" content="When I first came across Strapi, I had some misconceptions about it which are not immediately clear when reading about the framework in their docs." />
-        <link type="text/css" rel="stylesheet" href="../assets/style.css" />
+        <link type="text/css" rel="stylesheet" href="../assets/style.css?1" />
         <link rel="alternate" type="application/rss+xml" title="RSS" href="/posts.rss" />
         <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:creator" content="@paratron">
@@ -49,7 +49,7 @@
                 There are users and then there are users
               </a>
             </h2><p>Another design decision in Strapi was to have two kinds of users. One can access the frontend API only and others can access only the admin API. I assumed first that any user could have extra privileges given to access the admin UI. This is not the case.</p>
-<p>Bonus points to make things worse: e-mail adresses need to be unique among both kinds of users. If there ist a user with the mail <a href="mailto:&#x74;&#x65;&#x73;&#116;&#x40;&#x65;&#x78;&#x61;&#x6d;&#x70;&#108;&#101;&#46;&#x63;&#x6f;&#x6d;">&#x74;&#x65;&#x73;&#116;&#x40;&#x65;&#x78;&#x61;&#x6d;&#x70;&#108;&#101;&#46;&#x63;&#x6f;&#x6d;</a> for the frontend API, you cannot create another for the admin UI.</p>
+<p>Bonus points to make things worse: e-mail adresses need to be unique among both kinds of users. If there ist a user with the mail <a href="mailto:&#x74;&#101;&#115;&#x74;&#x40;&#x65;&#120;&#97;&#x6d;&#112;&#108;&#101;&#x2e;&#99;&#x6f;&#x6d;">&#x74;&#101;&#115;&#x74;&#x40;&#x65;&#120;&#97;&#x6d;&#112;&#108;&#101;&#x2e;&#99;&#x6f;&#x6d;</a> for the frontend API, you cannot create another for the admin UI.</p>
 
             <h2 id="ralations-to-the-users-table-are-complicated">
               <a class="anchor" href="#ralations-to-the-users-table-are-complicated">

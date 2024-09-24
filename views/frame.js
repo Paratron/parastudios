@@ -18,7 +18,7 @@ const frame = async (site, title, description, body, shareImage = "https://paras
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
         <title>${title} - ${site.title}</title>
         ${description ? `<meta name="description" content="${description}" />` : ""}
-        <link type="text/css" rel="stylesheet" href="../assets/style.css" />
+        <link type="text/css" rel="stylesheet" href="../assets/style.css?1" />
         <link rel="alternate" type="application/rss+xml" title="RSS" href="/posts.rss" />
         ${twitterCardMeta(site, title, description, shareImage)}
         <script async defer data-domain="parastudios.de" src="https://plausible.io/js/plausible.js"></script>
