@@ -25,7 +25,7 @@ const frame = async (site, title, description, body, shareImage = "https://paras
     </head>
     <body>
 		<header>
-			<a class="blog-title" href="/" title="${site.title}"><img src="../assets/web-love-bright.svg" alt="dev://❤" /></a>
+			<a class="blog-title" href="/" title="${site.title}"><img src="../assets/web-love-bright.svg?1" alt="dev://❤" /></a>
             <small>${site.description}</small>
 		</header>
 		${body}
