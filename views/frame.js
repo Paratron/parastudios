@@ -25,13 +25,11 @@ const frame = async (site, title, description, body, shareImage = "https://paras
     </head>
     <body>
 		<header>
-			<a class="blog-title" href="/" title="${site.title}"><img src="../assets/web-love-bright.svg" alt="web://❤" /></a>
+			<a class="blog-title" href="/" title="${site.title}"><img src="../assets/web-love-bright.svg" alt="dev://❤" /></a>
             <small>${site.description}</small>
 		</header>
 		${body}
-		<nav class="marginal">
-            <a href="https://twitter.com/paratron">Follow me on Twitter</a>
-            <a href="${user.html_url}">Follow me on Github</a>
+		<nav class="marginal">            
             <a href="/posts.rss">Blog RSS</a>
         </nav>
         <button class="darkModeButton" onclick="toggleDarkMode()">Toggle Dark Mode</button>

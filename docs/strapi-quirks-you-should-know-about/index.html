@@ -4,7 +4,7 @@
         <link href="../assets/favicon.svg" rel="shortcut icon">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
-        <title>Strapi quirks you should know about - web://❤</title>
+        <title>Strapi quirks you should know about - dev://❤</title>
         <meta name="description" content="When I first came across Strapi, I had some misconceptions about it which are not immediately clear when reading about the framework in their docs." />
         <link type="text/css" rel="stylesheet" href="../assets/style.css" />
         <link rel="alternate" type="application/rss+xml" title="RSS" href="/posts.rss" />
@@ -17,8 +17,8 @@
     </head>
     <body>
 		<header>
-			<a class="blog-title" href="/" title="web://❤"><img src="../assets/web-love-bright.svg" alt="web://❤" /></a>
-            <small>A web related blog by Christian Engel</small>
+			<a class="blog-title" href="/" title="dev://❤"><img src="../assets/web-love-bright.svg" alt="dev://❤" /></a>
+            <small>posts on software engineering</small>
 		</header>
 		<article>
 			
@@ -49,7 +49,7 @@
                 There are users and then there are users
               </a>
             </h2><p>Another design decision in Strapi was to have two kinds of users. One can access the frontend API only and others can access only the admin API. I assumed first that any user could have extra privileges given to access the admin UI. This is not the case.</p>
-<p>Bonus points to make things worse: e-mail adresses need to be unique among both kinds of users. If there ist a user with the mail <a href="mailto:&#116;&#101;&#115;&#116;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#101;&#46;&#x63;&#111;&#x6d;">&#116;&#101;&#115;&#116;&#64;&#101;&#x78;&#97;&#x6d;&#112;&#108;&#101;&#46;&#x63;&#111;&#x6d;</a> for the frontend API, you cannot create another for the admin UI.</p>
+<p>Bonus points to make things worse: e-mail adresses need to be unique among both kinds of users. If there ist a user with the mail <a href="mailto:&#116;&#x65;&#115;&#116;&#64;&#x65;&#120;&#97;&#109;&#112;&#108;&#x65;&#46;&#99;&#x6f;&#x6d;">&#116;&#x65;&#115;&#116;&#64;&#x65;&#120;&#97;&#109;&#112;&#108;&#x65;&#46;&#99;&#x6f;&#x6d;</a> for the frontend API, you cannot create another for the admin UI.</p>
 
             <h2 id="ralations-to-the-users-table-are-complicated">
               <a class="anchor" href="#ralations-to-the-users-table-are-complicated">
@@ -71,7 +71,8 @@
             <nav class="posts">
     <h3>Recent posts</h3>
     <nav class="postList">
-    <a href="../paper-review-plansearch/"><span>2024-09-24 16:45:00</span> <span>Research Paper Review: PLANSEARCH for LLMs</span></a>
+    <a href="../_18_rag-01/"><span>Wed Sep 25 2024 01:03:22 GMT+0200 (Mitteleuropäische Sommerzeit)</span> <span>_18_rag-01</span></a>
+<a href="../plansearch-o1-models-future-ai-reasoning/"><span>2024-09-24 14:00:00</span> <span>PLANSEARCH for LLMs</span></a>
 <a href="../stop-coding-already/"><span>2024-09-23 22:30:00</span> <span>Stop Coding Already!</span></a>
 <a href="../maximizing-security-user-experience-oauth-sveltekit/"><span>2024-09-22 11:00:00</span> <span>Maximizing Security and User Experience in OAuth flow on a SvelteKit app</span></a>
 <a href="../convert-mysql-postgres-database-to-sqlite/"><span>2022-05-30 13:00:00</span> <span>Convert a MySQL or Postgres database to SQLite</span></a>
@@ -91,9 +92,26 @@
     </nav>
 </nav>	
         </aside>
-		<nav class="marginal">
-            <a href="https://twitter.com/paratron">Follow me on Twitter</a>
-            <a href="https://github.com/Paratron">Follow me on Github</a>
+        <section class="bottom">
+            <section class="profile">
+    <a href="https://github.com/Paratron">
+        <img alt="Christian's Github Avatar" src="https://avatars2.githubusercontent.com/u/902599?v=4" />
+    </a>
+    <div>
+        <h1>Christian Engel</h1>
+        <h2>@paratron</h2>
+        <p>20+ years web dev | Full-stack architect | AI integrator Passionate about clean code, APIs, and docs Building innovative SaaS with AI | Open source enthusiast</p>
+    </div>
+
+    <nav>
+        <a href="https://twitter.com/paratron">Follow me on Twitter</a>
+        <a href="https://github.com/Paratron">Follow me on Github</a>
+        <a href="https://www.linkedin.com/in/christian-engel-a73457236/">Connect on LinkedIn</a>
+    </nav>
+    
+</section>
+        </section>
+		<nav class="marginal">            
             <a href="/posts.rss">Blog RSS</a>
         </nav>
         <button class="darkModeButton" onclick="toggleDarkMode()">Toggle Dark Mode</button>

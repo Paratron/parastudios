@@ -1,4 +1,5 @@
 const frame = require("./frame");
+const { renderGithubProfile } = require("./github");
 
 const buildOutline = (outline) => {
     if (!outline) {
@@ -20,14 +21,17 @@ const recentPosts = (posts) => {
 </nav>`;
 };
 
-const post = (data, post) => {
+const post = async (data, post) => {
     const body = `<article>
 			${post.content}
 		</article>
 		<aside>
 		    ${buildOutline(post.outline)}
             ${recentPosts(post.draft ? data.fullPosts : data.posts)}	
-        </aside>`;
+        </aside>
+        <section class="bottom">
+            ${await renderGithubProfile()}
+        </section>`;
 
     return frame(data.site, post.title, post.description, body, post.shareImage);
 };

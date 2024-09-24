@@ -1,25 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
   <channel>
-    <title>web://❤</title>
+    <title>dev://❤</title>
     <link>https://parastudios.de</link>
-    <description>A web related blog by Christian Engel</description>
+    <description>posts on software engineering</description>
     <language>en-en</language>
     <copyright>Christian Engel</copyright>
-    <pubDate>Tue, 24 Sep 2024 14:47:45 GMT</pubDate>
+    <pubDate>Tue, 24 Sep 2024 23:03:23 GMT</pubDate>
     <image>
       <url>https://parastudios.de/assets/web-love.svg</url>
-      <title>web://❤ - Logo</title>
+      <title>dev://❤ - Logo</title>
       <link>https://parastudios.de</link>
     </image>
 
     <item>
-      <title>Research Paper Review: PLANSEARCH for LLMs</title>
-      <description>Explore the fascinating developments in AI reasoning capabilities, comparing OpenAI's o1 models with the PLANSEARCH approach. Discover how these advancements are revolutionizing problem-solving in fields like coding, science, and mathematics.</description>
-      <link>https://parastudios.de/paper-review-plansearch</link>
+      <title>_18_rag-01</title>
+      <description>undefined</description>
+      <link>https://parastudios.de/_18_rag-01</link>
       <author>Christian Engel</author>
-      <guid>paper-review-plansearch</guid>
-      <pubDate>Tue, 24 Sep 2024 14:45:00 GMT</pubDate>
+      <guid>_18_rag-01</guid>
+      <pubDate>Tue, 24 Sep 2024 23:03:22 GMT</pubDate>
+    </item>
+    <item>
+      <title>PLANSEARCH for LLMs</title>
+      <description>Explore the fascinating developments in AI reasoning capabilities, comparing OpenAI's o1 models with the PLANSEARCH approach. Discover how these advancements are revolutionizing problem-solving in fields like coding, science, and mathematics.</description>
+      <link>https://parastudios.de/plansearch-o1-models-future-ai-reasoning</link>
+      <author>Christian Engel</author>
+      <guid>plansearch-o1-models-future-ai-reasoning</guid>
+      <pubDate>Tue, 24 Sep 2024 12:00:00 GMT</pubDate>
     </item>
     <item>
       <title>Stop Coding Already!</title>

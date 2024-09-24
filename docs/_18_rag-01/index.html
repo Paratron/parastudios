@@ -4,14 +4,14 @@
         <link href="../assets/favicon.svg" rel="shortcut icon">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
-        <title>Access denied for 'root'@'localhost' - dev://❤</title>
-        <meta name="description" content="MySQL won't let me authenticate as root user through an SSH tunnel in dbeaver." />
+        <title>_18_rag-01 - dev://❤</title>
+        
         <link type="text/css" rel="stylesheet" href="../assets/style.css" />
         <link rel="alternate" type="application/rss+xml" title="RSS" href="/posts.rss" />
         <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:creator" content="@paratron">
-    <meta name="twitter:title" content="Access denied for 'root'@'localhost'">
-    <meta name="twitter:description" content="MySQL won't let me authenticate as root user through an SSH tunnel in dbeaver.">
+    <meta name="twitter:title" content="_18_rag-01">
+    <meta name="twitter:description" content="undefined">
     <meta name="twitter:image" content="https://parastudios.de/assets/social.jpg">
         <script async defer data-domain="parastudios.de" src="https://plausible.io/js/plausible.js"></script>
     </head>
@@ -22,43 +22,9 @@
 		</header>
 		<article>
 			
-            <h1 id="access-denied-for-39-root-39-39-localhost-39-">
-              <a class="anchor" href="#access-denied-for-39-root-39-39-localhost-39-">
-                Access denied for &#39;root&#39;@&#39;localhost&#39;
-              </a>
-            </h1><p>I had the case where I tried to connect to a remote MySQL server through an SSH tunnel with <a href="https://dbeaver.io/">dbeaver</a>.</p>
-<p>The tunnel itself worked fine - I was able to create a connection but the server refused connecting and identifying as root user to the database. This happened on an old DigitalOcean Droplet with MySQL 5 installed where I was running a bunch of legacy websites.</p>
-<p>I pulled my hair and tried a couple of approaches around the <code>localhost</code> part - because MySQL can be restrictive here - <code>localhost != 127.0.0.1</code>. But it never worked out.</p>
-<p>When I created an SSH connection to the server, running the command <code>mysql -uroot</code> worked just fine - I was connected as root user immediately. It didn&#39;t even ask for a password. I assumed the authentication happened through an SSH key but I was wrong. The following command shined some light on the issue:</p>
-<pre><code class="language-sql"><span class="hljs-keyword">SELECT</span> <span class="hljs-keyword">user</span>, authentication_string, <span class="hljs-keyword">plugin</span>, host <span class="hljs-keyword">FROM</span> mysql.user;</code></pre>
-<p>It spits out a list of existing users of your MySQL server, what plugin the user uses for authentication and what hosts are allowed to connect.</p>
-<pre>
-+==================+===========================================+=======================+===========+
-| user             | authentication_string                     | plugin                | host      |
-+==================+===========================================+=======================+===========+
-| root             |                                           | auth_socket           | localhost |
-| mysql.session    | *THISISNOTAVALIDPASSWORDTHATCANBEUSEDHERE | mysql_native_password | localhost |
-| mysql.sys        | *THISISNOTAVALIDPASSWORDTHATCANBEUSEDHERE | mysql_native_password | localhost |
-| debian=sys=maint | *B5285813215392D85D7FA77AD05C24FF6AA515AB | mysql_native_password | localhost |
-| [redacted]       | *[redacted]4D1ACBE6B5B9F393AA0648D54DB938 | mysql_native_password | localhost |
-| [redacted]       | *[redacted]9CBDA80219F58DFDA56F563187B2EC | mysql_native_password | localhost |
-| [redacted]       | *[redacted]7CACDAAE0227BABE71F28CAAC9BEF5 | mysql_native_password | localhost |
-+==================+===========================================+=======================+===========+
-</pre>
-
-<p>Appearantly, the <code>root</code> user does not have a password set (<code>authentication_string</code> is empty). Also, it does not even use the <code>mysql_native_password</code> plugin for authentication but the <code>auth_socket</code> plugin.</p>
-<p>This means: as long as I connect from the <code>mysql</code> command on the same machine as the MySQL server, I can login as root user just fine. Through SSH, not.</p>
-<p>The fix is rather easy. We switch the auth plugin and set a password:</p>
-<pre><code class="language-sql"><span class="hljs-keyword">ALTER</span> <span class="hljs-keyword">USER</span> <span class="hljs-string">&#x27;root&#x27;</span>@<span class="hljs-string">&#x27;localhost IDENTIFIED WITH mysql_native_password BY &#x27;</span>MySuperSecurePassword@<span class="hljs-number">123</span><span class="hljs-string">&#x27;;</span></code></pre>
-<p>And thats it! After I updated the root user this way, I was able to connect to my MySQL server through an SSH tunnel in dbeaver just fine.</p>
-<p>Hope this note helps anyone :)</p>
-
 		</article>
 		<aside>
-		    <nav class="outline">
-        <h3>Post Content</h3>
-        
-</nav>
+		    
             <nav class="posts">
     <h3>Recent posts</h3>
     <nav class="postList">

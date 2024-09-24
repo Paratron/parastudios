@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "site": {
-    "title": "web://❤",
+    "title": "dev://❤",
     "url": "https://parastudios.de",
-    "description": "A web related blog by Christian Engel"
+    "description": "posts on software engineering"
   },
   "scripts": {
     "build_style": "sass ./assets/style.scss ./assets/style.css --style compressed",

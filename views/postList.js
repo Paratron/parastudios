@@ -3,6 +3,9 @@ const frame = require("./frame");
 
 function renderPost(post) {
     return `<section class="postListing">
+    <a href="./${post.slug}/" class="imgConstraint">
+    <img class="postImg" src="${post.shareImage}" alt="${post.title}" />
+    </a>
     <h3><a href="./${post.slug}/">${post.title}</a></h3>
     <small>Published on ${new Date(post.publishTime).toDateString()}</small>
     ${post.description ? `<p>${post.description}</p>` : ""}
