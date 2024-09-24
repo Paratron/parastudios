@@ -6,21 +6,13 @@
     <description>posts on software engineering</description>
     <language>en-en</language>
     <copyright>Christian Engel</copyright>
-    <pubDate>Tue, 24 Sep 2024 23:03:23 GMT</pubDate>
+    <pubDate>Tue, 24 Sep 2024 23:07:33 GMT</pubDate>
     <image>
       <url>https://parastudios.de/assets/web-love.svg</url>
       <title>dev://❤ - Logo</title>
       <link>https://parastudios.de</link>
     </image>
 
-    <item>
-      <title>_18_rag-01</title>
-      <description>undefined</description>
-      <link>https://parastudios.de/_18_rag-01</link>
-      <author>Christian Engel</author>
-      <guid>_18_rag-01</guid>
-      <pubDate>Tue, 24 Sep 2024 23:03:22 GMT</pubDate>
-    </item>
     <item>
       <title>PLANSEARCH for LLMs</title>
       <description>Explore the fascinating developments in AI reasoning capabilities, comparing OpenAI's o1 models with the PLANSEARCH approach. Discover how these advancements are revolutionizing problem-solving in fields like coding, science, and mathematics.</description>
