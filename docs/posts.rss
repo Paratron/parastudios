@@ -6,13 +6,21 @@
     <description>posts on software engineering</description>
     <language>en-en</language>
     <copyright>Christian Engel</copyright>
-    <pubDate>Tue, 24 Sep 2024 23:13:54 GMT</pubDate>
+    <pubDate>Thu, 26 Sep 2024 08:45:42 GMT</pubDate>
     <image>
       <url>https://parastudios.de/assets/web-love.svg</url>
       <title>dev://❤ - Logo</title>
       <link>https://parastudios.de</link>
     </image>
 
+    <item>
+      <title>Podcast notes: 🎙 The Building Blocks of Agentic Systems</title>
+      <description>undefined</description>
+      <link>https://parastudios.de/notes-from-building-blocks-of-agentic-systems</link>
+      <author>Christian Engel</author>
+      <guid>notes-from-building-blocks-of-agentic-systems</guid>
+      <pubDate>Thu, 26 Sep 2024 08:45:00 GMT</pubDate>
+    </item>
     <item>
       <title>PLANSEARCH for LLMs</title>
       <description>Explore the fascinating developments in AI reasoning capabilities, comparing OpenAI's o1 models with the PLANSEARCH approach. Discover how these advancements are revolutionizing problem-solving in fields like coding, science, and mathematics.</description>

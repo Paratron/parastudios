@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link href="../assets/favicon.svg" rel="shortcut icon">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>Podcast notes: 🎙 The Building Blocks of Agentic Systems - dev://❤</title>
+        
+        <link type="text/css" rel="stylesheet" href="../assets/style.css?1" />
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="/posts.rss" />
+        <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="@paratron">
+    <meta name="twitter:title" content="Podcast notes: 🎙 The Building Blocks of Agentic Systems">
+    <meta name="twitter:description" content="undefined">
+    <meta name="twitter:image" content="https://parastudios.de/notes-from-building-blocks-of-agentic-systems/header.webp">
+        <script async defer data-domain="parastudios.de" src="https://plausible.io/js/plausible.js"></script>
+    </head>
+    <body>
+		<header>
+			<a class="blog-title" href="/" title="dev://❤"><img src="../assets/web-love-bright.svg?1" alt="dev://❤" /></a>
+            <small>posts on software engineering</small>
+		</header>
+		<article>
+			<p><strong>Podcast notes: 🎙 The Building Blocks of Agentic Systems</strong></p>
+<p><img src="./header.webp" alt="A hand with a pen writing in a notebook, decorated with futuristic lines"></p>
+<p>In a rapidly evolving AI landscape, one thing remains constant: the need for effective communication between humans and the machines we’re building. Whether it&#39;s through prompt engineering or coding, how we express our intentions to AI systems is key to their success. On a recent episode of the <em>Twiml AI Podcast</em>, host Sam Charrington sat down with Harrison Chase, co-founder and CEO of <a href="https://www.langchain.com/">LangChain</a>, to discuss how LangChain is helping developers build with large language models (LLMs) and AI agents in more effective and scalable ways.</p>
+<blockquote>
+<p>This blog post is inspired by the TWIML podcast episode titled <a href="https://twimlai.com/podcast/twimlai/the-building-blocks-of-agentic-systems/">&quot;The Building Blocks of Agentic Systems&quot;</a>, which I thoroughly enjoyed. I wanted to preserve the key insights from this interview in text form for my personal reference and to revisit later.</p>
+</blockquote>
+
+            <h3 id="the-story-behind-langchain">
+              <a class="anchor" href="#the-story-behind-langchain">
+                The Story Behind LangChain
+              </a>
+            </h3><p>Harrison Chase&#39;s journey to founding LangChain was built on a foundation of machine learning (ML) and ML operations (MLOps). He gained experience at fintech company Kensho and MLOps startup Robust Intelligence, where he worked on NLP, time series analysis, and model testing and validation. By September 2022, Chase was ready to strike out on his own but didn’t know what exactly to pursue. Around this time, the AI space was buzzing with activity: Stable Diffusion had just launched, and OpenAI&#39;s GPT-3 was starting to gain traction, although ChatGPT was still on the horizon.</p>
+<p>After attending meetups and hackathons, Chase recognized a growing demand for tools to build applications using LLMs. He saw an opportunity to abstract common patterns and workflows into a simple package, which eventually became LangChain. The timing was perfect: a month later, ChatGPT launched, and the momentum around LLM development skyrocketed. </p>
+<p>Fast forward nearly two years, and LangChain has grown tremendously. It boasts 15 million monthly downloads, powers over 100,000 applications, and has <a href="https://github.com/langchain-ai">a vibrant open-source community</a> with more than 2,000 contributors.</p>
+
+            <h3 id="the-rise-of-langchain-and-its-product-suite">
+              <a class="anchor" href="#the-rise-of-langchain-and-its-product-suite">
+                The Rise of LangChain and Its Product Suite
+              </a>
+            </h3><p>LangChain functions as an python-based orchestration framework for Large Language Models (LLMs), enabling developers to seamlessly integrate various AI models, vector stores, and tools into cohesive applications. Chase emphasized LangChain&#39;s key strength: its ability to act as a connective layer between diverse LLM components. This includes linking vector stores, document loaders, and an extensive array of LLM providers — over 80 in total. The framework&#39;s versatility has contributed to its widespread adoption across numerous AI initiatives.</p>
+<p>As the company grew, so did its product offerings. In addition to the original LangChain library, the company has introduced:</p>
+<ol>
+<li><p><a href="https://www.langchain.com/langsmith"><strong>LangSmith</strong></a>: A tool for observability, testing, and evaluation. LangSmith helps developers transition from prototyping to production by offering insights into how applications are functioning. It includes features for observability, such as tracking app behavior, and testing and evaluation tools to ensure consistent performance.</p>
+</li>
+<li><p><a href="https://www.langchain.com/langgraph"><strong>LangGraph</strong></a>: A low-level orchestration tool designed for complex, agentic applications that involve loops, decision-making, and memory. LangGraph provides a more granular level of control for developers building advanced AI systems. </p>
+</li>
+<li><p><strong>LangGraph Cloud</strong>: A hosted runtime for LangGraph, enabling developers to deploy and manage their agent systems with built-in persistence and memory.</p>
+</li>
+</ol>
+<p>These products are designed to help developers move beyond simple prototypes and build AI applications that can scale effectively in production environments.</p>
+
+            <h3 id="agents-hype-and-reality">
+              <a class="anchor" href="#agents-hype-and-reality">
+                Agents: Hype and Reality
+              </a>
+            </h3><p>A major part of LangChain’s appeal lies in its support for building <strong>agents</strong> — AI systems that can make decisions and act autonomously. However, as Chase explained, there’s still a gap between the potential of AI agents and their current real-world capabilities.</p>
+<p>The idea of AI agents gained major attention with the release of <a href="https://github.com/Significant-Gravitas/AutoGPT">Auto-GPT</a> in March 2023, which Chase described as a &quot;fastest growing GitHub project in history.&quot; Auto-GPT captured the imagination by running an LLM in a loop and enabling it to use tools like web search to complete ambitious tasks such as &quot;growing a Twitter following.&quot; However, the excitement quickly cooled as users realized that agents often struggled to complete complex tasks reliably and were generally slow.</p>
+<p>Chase noted that agents work best in more <em>focused applications</em>, such as customer support or data enrichment, where there is a clear workflow and limited ambiguity. For instance, <a href="https://www.elastic.co/elastic-agent">Elastic&#39;s agent-based system</a> helps users debug issues by searching through logs and providing explanations. Similarly, <a href="https://ramp.com/blog/ramp-finance-automation-platform">Ramp built an agent</a> that helps users navigate their website by identifying actions they need to take, such as filing expense reports.</p>
+<p>What makes these systems successful is their <em>structured, workflow-driven nature</em>. They don’t rely on the LLM to make every decision but rather guide it through a series of steps that are tightly controlled, reducing the chances of error.</p>
+
+            <h3 id="rag-and-agents-where-retrieval-meets-action">
+              <a class="anchor" href="#rag-and-agents-where-retrieval-meets-action">
+                RAG and Agents: Where Retrieval Meets Action
+              </a>
+            </h3><p>Another major trend in AI applications is <strong>retrieval-augmented generation (RAG)</strong>. RAG involves enhancing LLMs by allowing them to pull in external data—often from enterprise systems—to generate more informed responses. Chase pointed out that RAG is essentially an extension of search functionality, with LLMs retrieving and reasoning over documents or logs.</p>
+<p>LangChain supports RAG use cases through its integrations with various vector stores and retrieval tools. However, Chase highlighted that the combination of RAG with agents is becoming increasingly popular. In this setup, an agent uses RAG <em>as a tool</em>, dynamically deciding when to retrieve external data and how to incorporate it into its decision-making process.</p>
+
+            <h3 id="langsmith-observability-and-evaluation-in-action">
+              <a class="anchor" href="#langsmith-observability-and-evaluation-in-action">
+                LangSmith: Observability and Evaluation in Action
+              </a>
+            </h3><p>Building reliable AI systems goes beyond just making them functional — it requires careful <strong>evaluation and observability</strong>. This is where <a href="https://www.langchain.com/langsmith">LangSmith</a> comes in. According to Chase, LangSmith offers deep insights into how an AI application is behaving, which is crucial for catching issues early and iterating on the system.</p>
+<p>Developers can use LangSmith to trace the steps taken by their agent, monitor inputs and outputs, and ensure that the system is performing as expected. LangSmith also offers tools for testing and evaluation, allowing developers to track metrics over time and continuously refine their models. A big focus of LangSmith is helping developers understand where their agents might be making wrong decisions due to poor inputs, a lack of context, or other factors.</p>
+
+            <h3 id="the-future-of-llms-and-ai-agents">
+              <a class="anchor" href="#the-future-of-llms-and-ai-agents">
+                The Future of LLMs and AI Agents
+              </a>
+            </h3><p>Looking ahead, Chase shared some of his thoughts on where the AI ecosystem is headed. While models like GPT-4 have advanced significantly, he believes that we’ll continue to need sophisticated orchestration tools like <a href="https://www.langchain.com/langgraph">LangGraph</a> to manage complex AI workflows. He’s also bullish on the future of <strong>dynamic few-shot prompting</strong>, a technique that helps personalize AI outputs by selecting the most relevant examples to guide the LLM’s behavior.</p>
+<p>Chase also sees potential in <strong>multimodal models</strong>, especially those that incorporate speech. Applications like customer support, where much of the interaction happens over the phone, could benefit immensely from speech-enabled agents that bypass the need for transcription.</p>
+
+            <h3 id="conclusion">
+              <a class="anchor" href="#conclusion">
+                Conclusion
+              </a>
+            </h3><p>As the AI landscape continues to evolve, LangChain is positioning itself as a key player in helping developers bridge the gap between prototype and production. Whether it’s through building agentic systems, leveraging retrieval-augmented generation, or ensuring robust observability, LangChain is providing the tools developers need to create more reliable and effective AI applications.</p>
+<p>LangChain’s story is a testament to the power of timing, community, and a deep understanding of where the AI space is headed. And with Chase at the helm, it’s clear that LangChain will continue to play a pivotal role in the future of AI development.</p>
+
+		</article>
+		<aside>
+		    <nav class="outline">
+        <h3>Post Content</h3>
+        <a href="#the-story-behind-langchain" class="l3">The Story Behind LangChain</a>
+<a href="#the-rise-of-langchain-and-its-product-suite" class="l3">The Rise of LangChain and Its Product Suite</a>
+<a href="#agents-hype-and-reality" class="l3">Agents: Hype and Reality</a>
+<a href="#rag-and-agents-where-retrieval-meets-action" class="l3">RAG and Agents: Where Retrieval Meets Action</a>
+<a href="#langsmith-observability-and-evaluation-in-action" class="l3">LangSmith: Observability and Evaluation in Action</a>
+<a href="#the-future-of-llms-and-ai-agents" class="l3">The Future of LLMs and AI Agents</a>
+<a href="#conclusion" class="l3">Conclusion</a>
+</nav>
+            <nav class="posts">
+    <h3>Recent posts</h3>
+    <nav class="postList">
+    <a href="../notes-from-building-blocks-of-agentic-systems/"><span>2024-09-26 10:45:00</span> <span>Podcast notes: 🎙 The Building Blocks of Agentic Systems</span></a>
+<a href="../plansearch-o1-models-future-ai-reasoning/"><span>2024-09-24 14:00:00</span> <span>PLANSEARCH for LLMs</span></a>
+<a href="../stop-coding-already/"><span>2024-09-23 22:30:00</span> <span>Stop Coding Already!</span></a>
+<a href="../maximizing-security-user-experience-oauth-sveltekit/"><span>2024-09-22 11:00:00</span> <span>Maximizing Security and User Experience in OAuth flow on a SvelteKit app</span></a>
+<a href="../convert-mysql-postgres-database-to-sqlite/"><span>2022-05-30 13:00:00</span> <span>Convert a MySQL or Postgres database to SQLite</span></a>
+<a href="../subscribable-stores-in-react/"><span>2022-05-21 09:30:00</span> <span>Subscribable stores in React</span></a>
+<a href="../limit-access-of-strapi-users-to-their-own-entries/"><span>2022-05-15 21:30:00</span> <span>Limit access of Strapi users to their own entries</span></a>
+<a href="../strapi-quirks-you-should-know-about/"><span>2022-04-30 23:00:00</span> <span>Strapi quirks you should know about</span></a>
+<a href="../typed-event-system-for-typescript/"><span>2022-04-19 15:25:00</span> <span>A typed event system for Typescript</span></a>
+<a href="../access-denied-for-root-at-localhost/"><span>2021-12-09 18:00:00</span> <span>Access denied for 'root'@'localhost'</span></a>
+<a href="../media-query-organization-in-sass/"><span>2021-11-19 12:55:10</span> <span>Media Query organization in SASS</span></a>
+<a href="../redirect-response-pattern/"><span>2021-10-04 10:33:00</span> <span>The Redirect Response pattern</span></a>
+<a href="../introducing-and-using-obsidian/"><span>2021-09-28 22:09:10</span> <span>Introducing and using Obsidian</span></a>
+<a href="../mocking-modules-with-jest-and-typescript/"><span>2020-12-10 20:46:00</span> <span>Mocking modules with jest and typescript</span></a>
+<a href="../the-new-old-school/"><span>2020-10-14 23:22:00</span> <span>The new old school</span></a>
+<a href="../updates-about-react-hook-router/"><span>2019-04-30 13:58:56</span> <span>Updates about react hook router</span></a>
+<a href="../modern-and-clean-routing-with-hooks/"><span>2019-03-21 12:17:37</span> <span>Modern and clean routing with hooks</span></a>
+<a href="../create-a-react-component-as-npm-module/"><span>2019-03-06 15:42:31</span> <span>Create a react component as npm module</span></a>
+    </nav>
+</nav>	
+        </aside>
+        <section class="bottom">
+            <section class="profile">
+    <a href="https://github.com/Paratron">
+        <img alt="Christian's Github Avatar" src="https://avatars2.githubusercontent.com/u/902599?v=4" />
+    </a>
+    <div>
+        <h1>Christian Engel</h1>
+        <h2>@paratron</h2>
+        <p>20+ years web dev | Full-stack architect | AI integrator Passionate about clean code, APIs, and docs Building innovative SaaS with AI | Open source enthusiast</p>
+    </div>
+
+    <nav>
+        <a href="https://twitter.com/paratron">Follow me on Twitter</a>
+        <a href="https://github.com/Paratron">Follow me on Github</a>
+        <a href="https://www.linkedin.com/in/christian-engel-a73457236/">Connect on LinkedIn</a>
+    </nav>
+    
+</section>
+        </section>
+		<nav class="marginal">            
+            <a href="/posts.rss">Blog RSS</a>
+        </nav>
+        <button class="darkModeButton" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        <script>
+            function toggleDarkMode(){
+                document.querySelector("html").toggleAttribute("data-dark");
+                localStorage.setItem("dark", document.querySelector("html").getAttribute("data-dark"));
+            }
+            if(localStorage.getItem("dark") !== null){
+                toggleDarkMode();
+            }
+        </script>
+    </body>
+</html>
