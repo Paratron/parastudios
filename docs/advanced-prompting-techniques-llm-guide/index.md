@@ -12,7 +12,7 @@ description: "An in-depth exploration of effective prompting methods for large l
 
 ## Introduction
 
-As large language models (LLMs) like GPT-4 and Claude 3.5 continue to evolve, mastering effective prompting techniques becomes crucial for maximizing their potential. This guide explores the most relevant and powerful prompting methods for today's AI landscape, with a focus on their applicability to leading models like ChatGPT and Claude.
+As a software engineer, I find it essential to master effective prompting techniques as large language models (LLMs) like GPT-4 and Claude 3.5 continue to evolve. This guide is my personal reference, offering a comprehensive overview of various prompting methods along with examples. My goal is to help you understand when and how to apply these techniques effectively while implementing AI in software development, with a focus on their applicability to leading models like ChatGPT and Claude.
 
 ## 1. Chain-of-Thought (CoT) Prompting
 
