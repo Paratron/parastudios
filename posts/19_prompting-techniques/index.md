@@ -268,6 +268,32 @@ By alternating between reasoning and acting steps, ReAct is better suited for ta
 
 For a more detailed analysis, see the original research paper: ["ReAct: Synergizing Reasoning and Acting in Language Models" (Yao et al., 2022)](https://arxiv.org/abs/2210.03629).
 
+## 9. PLANSEARCH
+
+**PLANSEARCH** is a framework designed to enhance AI reasoning by breaking down complex tasks into distinct phases of **planning** and **searching**. This approach allows AI systems to map out potential paths toward a solution before committing to specific actions, making it particularly effective for tasks requiring long-term reasoning and adaptation. PLANSEARCH can be seen as a forward-looking method for improving how AI navigates complex environments by organizing the decision-making process into structured steps that involve both exploration and execution.
+
+### How PLANSEARCH Works
+
+In PLANSEARCH, a model first generates a **plan**, which outlines the high-level steps needed to solve a given problem. After this planning phase, the model initiates a **search** process to explore different possible solutions or actions that align with the plan. This separation allows the model to focus on the "what" (planning) and the "how" (searching) in a more efficient and goal-oriented way. The result is a model capable of dynamically adjusting its path based on real-time feedback or changes in the environment, making it highly suitable for complex problem-solving【25†source】.
+
+### Comparison with Tree of Thought (ToT) and ReAct
+
+While **Tree of Thought (ToT)** and **ReAct** also emphasize structured decision-making, they approach it differently:
+
+- **ToT** uses a decision tree-like structure, exploring multiple reasoning paths simultaneously and evaluating each branch to determine the best course of action. It focuses heavily on **exploring** various thoughts in parallel before selecting the most viable one, relying on backtracking and pruning to refine its approach【5†source】【6†source】.
+
+- **ReAct** integrates reasoning with actionable steps, alternating between **reasoning traces** and **actions**. The model dynamically interacts with external environments (like APIs or search engines) to gather information and adjust its reasoning based on real-world feedback, making it highly interactive【22†source】【23†source】.
+
+- **PLANSEARCH**, on the other hand, separates the **planning** and **searching** phases. This allows it to excel in situations where long-term, goal-oriented thinking is required, as it can adjust both its plan and the specific search paths it explores. It offers a more structured approach to problems requiring careful planning over many stages, making it a strong candidate for highly complex, multi-step tasks【25†source】【9†source】.
+
+### Use Cases and Applications
+
+Like ToT and ReAct, PLANSEARCH is particularly useful for tasks that involve **long-term reasoning**, such as strategic planning, multi-stage problem-solving, and scenarios that involve interacting with dynamic environments. However, its distinct strength lies in its **dual-phase approach**, where the model can first plan out the sequence of tasks and then explore the best solutions within that plan.
+
+For a deeper dive into the PLANSEARCH framework and its future applications in AI reasoning, you can read my full post here: [PLANSEARCH for LLMs](https://parastudios.de/plansearch-o1-models-future-ai-reasoning).
+
+By integrating PLANSEARCH into the broader landscape of advanced prompting techniques, we gain a richer toolkit for building AI systems capable of handling increasingly complex reasoning and decision-making tasks.
+
 ## Conclusion
 
 While these prompting techniques remain effective for both ChatGPT-4 and Claude 3.5, it's important to note that these advanced LLMs are increasingly capable of understanding and responding to natural language instructions. Often, clear and concise prompts can yield excellent results without resorting to complex prompting strategies.
