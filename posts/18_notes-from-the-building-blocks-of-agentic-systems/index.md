@@ -3,7 +3,7 @@ title: "Podcast notes: 🎙 The Building Blocks of Agentic Systems"
 slug: notes-from-building-blocks-of-agentic-systems
 publishTime: "2024-09-26 10:45:00"
 tags: [notes, AI, LangChain, Podcast, Agents]
-summary: "Insights from the TWIML AI Podcast episode discussing LangChain and its role in AI development."
+description: "Insights from the TWIML AI Podcast episode discussing LangChain and its role in AI development."
 ---
 **Podcast notes: 🎙 The Building Blocks of Agentic Systems**
 

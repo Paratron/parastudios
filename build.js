@@ -158,6 +158,10 @@ readDir('./posts').then(async (folders) => {
         fullData.posts = posts.filter((post) => !post.draft);
 
         async function renderPost(post) {
+            if(!post.description){
+                console.error("No description found for post: " + post.title);
+            }
+
             const html = await views.post(fullData, post);
             fs.ensureDir(`${buildTargetDirectory}/${post.slug}`);
             writeFile(`${buildTargetDirectory}/${post.slug}/index.html`, html);

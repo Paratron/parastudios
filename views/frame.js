@@ -5,7 +5,7 @@ const twitterCardMeta = (site, title, description, image) =>
     <meta name="twitter:creator" content="@paratron">
     <meta name="twitter:title" content="${title}">
     <meta name="twitter:description" content="${description}">
-    <meta name="twitter:image" content="${image}">`;
+    <meta name="twitter:image" content="${image.replace(/\.webp/, ".jpg")}">`;
 
 const frame = async (site, title, description, body, shareImage = "https://parastudios.de/assets/social.jpg") => {
     const user = await getGithubData();
