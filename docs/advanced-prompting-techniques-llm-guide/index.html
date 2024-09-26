@@ -316,6 +316,40 @@ These points underscore the complex <span class="hljs-keyword">and</span> <span 
 <p>By alternating between reasoning and acting steps, ReAct is better suited for tasks that involve real-time decisions or require the model to adapt based on new information. Moreover, it addresses the limitations of reasoning frameworks that operate solely on static knowledge, making it a valuable tool for environments where external information needs to be continually integrated into the model’s reasoning.</p>
 <p>For a more detailed analysis, see the original research paper: <a href="https://arxiv.org/abs/2210.03629">&quot;ReAct: Synergizing Reasoning and Acting in Language Models&quot; (Yao et al., 2022)</a>.</p>
 
+            <h2 id="9-plansearch">
+              <a class="anchor" href="#9-plansearch">
+                9. PLANSEARCH
+              </a>
+            </h2><p><strong>PLANSEARCH</strong> is a framework designed to enhance AI reasoning by breaking down complex tasks into distinct phases of <strong>planning</strong> and <strong>searching</strong>. This approach allows AI systems to map out potential paths toward a solution before committing to specific actions, making it particularly effective for tasks requiring long-term reasoning and adaptation. PLANSEARCH can be seen as a forward-looking method for improving how AI navigates complex environments by organizing the decision-making process into structured steps that involve both exploration and execution.</p>
+
+            <h3 id="how-plansearch-works">
+              <a class="anchor" href="#how-plansearch-works">
+                How PLANSEARCH Works
+              </a>
+            </h3><p>In PLANSEARCH, a model first generates a <strong>plan</strong>, which outlines the high-level steps needed to solve a given problem. After this planning phase, the model initiates a <strong>search</strong> process to explore different possible solutions or actions that align with the plan. This separation allows the model to focus on the &quot;what&quot; (planning) and the &quot;how&quot; (searching) in a more efficient and goal-oriented way. The result is a model capable of dynamically adjusting its path based on real-time feedback or changes in the environment, making it highly suitable for complex problem-solving【25†source】.</p>
+
+            <h3 id="comparison-with-tree-of-thought-tot-and-react">
+              <a class="anchor" href="#comparison-with-tree-of-thought-tot-and-react">
+                Comparison with Tree of Thought (ToT) and ReAct
+              </a>
+            </h3><p>While <strong>Tree of Thought (ToT)</strong> and <strong>ReAct</strong> also emphasize structured decision-making, they approach it differently:</p>
+<ul>
+<li><p><strong>ToT</strong> uses a decision tree-like structure, exploring multiple reasoning paths simultaneously and evaluating each branch to determine the best course of action. It focuses heavily on <strong>exploring</strong> various thoughts in parallel before selecting the most viable one, relying on backtracking and pruning to refine its approach【5†source】【6†source】.</p>
+</li>
+<li><p><strong>ReAct</strong> integrates reasoning with actionable steps, alternating between <strong>reasoning traces</strong> and <strong>actions</strong>. The model dynamically interacts with external environments (like APIs or search engines) to gather information and adjust its reasoning based on real-world feedback, making it highly interactive【22†source】【23†source】.</p>
+</li>
+<li><p><strong>PLANSEARCH</strong>, on the other hand, separates the <strong>planning</strong> and <strong>searching</strong> phases. This allows it to excel in situations where long-term, goal-oriented thinking is required, as it can adjust both its plan and the specific search paths it explores. It offers a more structured approach to problems requiring careful planning over many stages, making it a strong candidate for highly complex, multi-step tasks【25†source】【9†source】.</p>
+</li>
+</ul>
+
+            <h3 id="use-cases-and-applications">
+              <a class="anchor" href="#use-cases-and-applications">
+                Use Cases and Applications
+              </a>
+            </h3><p>Like ToT and ReAct, PLANSEARCH is particularly useful for tasks that involve <strong>long-term reasoning</strong>, such as strategic planning, multi-stage problem-solving, and scenarios that involve interacting with dynamic environments. However, its distinct strength lies in its <strong>dual-phase approach</strong>, where the model can first plan out the sequence of tasks and then explore the best solutions within that plan.</p>
+<p>For a deeper dive into the PLANSEARCH framework and its future applications in AI reasoning, you can read my full post here: <a href="https://parastudios.de/plansearch-o1-models-future-ai-reasoning">PLANSEARCH for LLMs</a>.</p>
+<p>By integrating PLANSEARCH into the broader landscape of advanced prompting techniques, we gain a richer toolkit for building AI systems capable of handling increasingly complex reasoning and decision-making tasks.</p>
+
             <h2 id="conclusion">
               <a class="anchor" href="#conclusion">
                 Conclusion
@@ -337,6 +371,7 @@ These points underscore the complex <span class="hljs-keyword">and</span> <span 
 <a href="#6-contextual-prompting" class="l2">6. Contextual Prompting</a>
 <a href="#7-tree-of-thought-tot-" class="l2">7. Tree of Thought (ToT)</a>
 <a href="#8-react-reasoning-and-acting-" class="l2">8. ReAct (Reasoning and Acting)</a>
+<a href="#9-plansearch" class="l2">9. PLANSEARCH</a>
 <a href="#conclusion" class="l2">Conclusion</a>
 </nav>
             <nav class="posts">
