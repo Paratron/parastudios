@@ -6,13 +6,21 @@
     <description>posts on software engineering</description>
     <language>en-en</language>
     <copyright>Christian Engel</copyright>
-    <pubDate>Thu, 26 Sep 2024 09:25:10 GMT</pubDate>
+    <pubDate>Thu, 26 Sep 2024 20:00:08 GMT</pubDate>
     <image>
       <url>https://parastudios.de/assets/web-love.svg</url>
       <title>dev://❤ - Logo</title>
       <link>https://parastudios.de</link>
     </image>
 
+    <item>
+      <title>Advanced Prompting Techniques for Modern Large Language Models: A Comprehensive Guide</title>
+      <description>An in-depth exploration of effective prompting methods for large language models, including Chain-of-Thought, Few-Shot, and Tree of Thought techniques, and a comparison of the current models of ChatGPT and Claude.</description>
+      <link>https://parastudios.de/advanced-prompting-techniques-llm-guide</link>
+      <author>Christian Engel</author>
+      <guid>advanced-prompting-techniques-llm-guide</guid>
+      <pubDate>Thu, 26 Sep 2024 19:55:00 GMT</pubDate>
+    </item>
     <item>
       <title>Podcast notes: 🎙 The Building Blocks of Agentic Systems</title>
       <description>Insights from the TWIML AI Podcast episode discussing LangChain and its role in AI development.</description>
