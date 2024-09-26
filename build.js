@@ -34,7 +34,7 @@ const renderer = {
     }
 };
 
-marked.use({renderer});
+marked.use({ renderer });
 
 const views = require("./views");
 
@@ -55,11 +55,13 @@ const fileExists = (filename, files) => !!(files.find(f => f === filename));
  * I want to show a little navigation in the post sidebar that links to the posts inner headlines.
  * In order to build that nav, I am running through the lexed nodes of the markdown post to find all headlines.
  */
-const buildPostOutlineFromLexedMarkdown = (lex) => {
+const buildPostOutlineFromLexedMarkdown = (lex, limit = 0) => {
     let outline = [];
     lex.forEach(elm => {
         if (elm.type === "heading" && elm.depth > 1) {
-            outline.push({level: elm.depth, text: elm.text, hash: escapeText(elm.text)});
+            if (limit > 0 && elm.depth <= limit) {
+                outline.push({ level: elm.depth, text: elm.text, hash: escapeText(elm.text) });
+            }
         }
     });
 
@@ -138,7 +140,7 @@ readDir('./posts').then(async (folders) => {
             post.content = marked(markdownSource);
 
             const lexedSource = marked.lexer(markdownSource);
-            post.outline = buildPostOutlineFromLexedMarkdown(lexedSource);
+            post.outline = buildPostOutlineFromLexedMarkdown(lexedSource, post.outlineLimit);
             post.shareImage = getShareImageFromPost(lexedSource, `${host}/${post.slug}`);
         }
 
@@ -158,7 +160,7 @@ readDir('./posts').then(async (folders) => {
         fullData.posts = posts.filter((post) => !post.draft);
 
         async function renderPost(post) {
-            if(!post.description){
+            if (!post.description) {
                 console.error("No description found for post: " + post.title);
             }
 
