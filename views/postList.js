@@ -7,7 +7,7 @@ function renderPost(post) {
         <img class="postImg" src="${post.shareImage}" alt="${post.title}" loading="lazy" />
     </a>` : ""}
     <h3><a href="./${post.slug}/">${post.title}</a></h3>
-    <small>Published on ${new Date(post.publishTime).toDateString()}</small>
+    <small>Published on ${new Date(post.publishTime).toDateString()} - ${post.wordCount} words - Reading time: ${post.readingTime}min</small>
     ${post.description ? `<p>${post.description}</p>` : ""}
     <p>
         <a href="./${post.slug}/">Read ${post.title}</a>

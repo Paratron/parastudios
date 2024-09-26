@@ -144,6 +144,9 @@ readDir('./posts').then(async (folders) => {
             post.shareImage = getShareImageFromPost(lexedSource, `${host}/${post.slug}`);
         }
 
+        post.wordCount = post.content.split(/\s+/).length;
+        post.readingTime = Math.ceil(post.wordCount / 200);
+
         return post;
     });
 
