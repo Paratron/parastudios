@@ -145,7 +145,7 @@ readDir('./posts').then(async (folders) => {
         }
 
         post.wordCount = post.content.split(/\s+/).length;
-        post.readingTime = Math.ceil(post.wordCount / 200);
+        post.readingTime = Math.ceil(post.wordCount / 150);
 
         return post;
     });
